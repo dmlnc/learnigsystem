@@ -24,18 +24,6 @@ class StoreCourseRequest extends FormRequest
                 'string',
                 'required',
             ],
-            'price' => [
-                'numeric',
-                'nullable',
-            ],
-            'thumbnail' => [
-                'array',
-                'nullable',
-            ],
-            'thumbnail.*.id' => [
-                'integer',
-                'exists:media,id',
-            ],
             'is_published' => [
                 'boolean',
             ],

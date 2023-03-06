@@ -16,9 +16,44 @@
           @submit="handleSubmit"
           :hideRequiredMark="true"
         >
-          <a-form-item class="mb-10" label="Название" name="name" :colon="false">
+        <a-form-item class="mb-10" label="Изображение" name="image" :colon="false">
+
+        <a-upload
+            v-model:file-list="fileList"
+            name="file"
+            multiple="false"
+            list-type="picture-card"
+            class="avatar-uploader"
+            :show-upload-list="true"
+            :headers="{'Authorization': `Bearer ${getAuthToken}`}"
+            action="api/v1/courses/media"
+        >
+          <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
+          <div v-else>
+            <loading-outlined v-if="loading"></loading-outlined>
+            <plus-outlined v-else></plus-outlined>
+            <div class="ant-upload-text">Upload</div>
+          </div>
+        </a-upload>
+        </a-form-item>
+
+        <a-form-item class="mb-10" label="Факультет" name="faculties" :colon="false">
+<!--          <v-select :options="data.academies" label="title"></v-select>-->
+          <a-select
+              :labelInValue="true"
+              v-model:value="form.faculties"
+              mode="multiple"
+              :options="data.academies"
+              :field-names="{ label: 'label', value: 'value', options: 'children' }">
+          </a-select>
+        </a-form-item>
+        <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
+          <a-textarea v-model:value="form.description" />
+        </a-form-item>
+
+          <a-form-item class="mb-10" label="Название" name="title" :colon="false">
             <a-input 
-              v-model:value="form.name"
+              v-model:value="form.title"
             />
           </a-form-item>
           
@@ -41,6 +76,7 @@
 
 
 import { notification } from 'ant-design-vue';
+import AuthUtil from '@/libs/auth/auth';
 
 
   export default ({
@@ -50,15 +86,23 @@ import { notification } from 'ant-design-vue';
       return {
         // Binded model property for "Sign In Form" switch button for "Remember Me" .
         text: null,
+        fileList: null,
+        data: {},
+        imageUrl: null,
         initialForm: {
-          name: '',
+          title: '',
+          description:'',
+          faculties: [],
         },
         initialId: null,
         loading: false,
         form: {},
         rules: {
-              name: [
+              title: [
                   { required: true, message: 'Введите название', trigger: 'blur' },
+              ],
+              description: [
+                { required: true, message: 'Введите описание', trigger: 'blur' },
               ],
             }
       }
@@ -68,11 +112,15 @@ import { notification } from 'ant-design-vue';
       'id',
       'visible'
     ],
-
+    components:{
+    },
     computed:{
+      getAuthToken(){
+        return AuthUtil.getAuthToken()
+      },
       name(){
         if(this.initialId != null){
-          return this.form.name
+          return this.form.title
         }
 
         return '';
@@ -103,6 +151,7 @@ import { notification } from 'ant-design-vue';
 
     mounted(){
       this.resetForm();
+      this.fetchCreate();
     },
 
     methods: {
@@ -110,6 +159,28 @@ import { notification } from 'ant-design-vue';
       resetForm(){
         this.form = this.initialForm;
       },
+
+      fetchCreate() {
+        this.$axios.get('/courses/create')
+            .then(response => {
+              let academies = response.data.meta.academies
+              let transformedAcademies = academies.map(academy => ({
+                label: `Академия ${academy.name}`,
+                value: academy.id.toString(),
+                children: academy.faculties.map(faculty => ({
+                  label: `Факультет ${faculty.name}`,
+                  value: faculty.id.toString(),
+                }))
+              }));
+
+              this.data = {
+                academies: transformedAcademies
+              }
+              // this.form = response.data.data;
+              // router.push({ name: 'Academy', params: {academy_id: } })
+            })
+      },
+
 
       loadData(id){
         this.loading = true;

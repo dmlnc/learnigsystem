@@ -41,6 +41,24 @@ let routes = [{
         layout: "dashboard",
         component: () => import( /* webpackChunkName: "dashboard" */ '../views/Faculties.vue'),
     },
+    {
+        path: '/courses/:course_id/lessons',
+        name: 'Lessons-page',
+        layout: "dashboard",
+        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Lessons.vue'),
+    },
+    {
+        path: '/courses/:course_id/lessons/:lesson_id/tests',
+        name: 'Tests-page',
+        layout: "dashboard",
+        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Tests.vue'),
+    },
+    // {
+    //     path: '/courses/:course_id/lessons/:lesson_id/tests/:test_id',
+    //     name: 'Test-page',
+    //     layout: "dashboard",
+    //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/Test.vue'),
+    // },
 
     {
         path: '/users',

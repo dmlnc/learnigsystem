@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AcademyApiController;
+use App\Http\Controllers\Api\CoursesApiController;
 use App\Http\Controllers\Api\FacultyApiController;
 use App\Http\Controllers\Api\UsersApiController;
 
@@ -28,6 +29,8 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']
 
     Route::apiResource('academies', AcademyApiController::class);
     Route::apiResource('academies/{academy}/faculties', FacultyApiController::class);
+    Route::resource('courses', CoursesApiController::class);
+    Route::post('/courses/media', [CoursesApiController::class, 'storeMedia']);
 
 
     Route::post('/logout', 'AuthController@logout');
