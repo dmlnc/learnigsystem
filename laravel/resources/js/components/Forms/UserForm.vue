@@ -3,13 +3,13 @@
         <a-skeleton active :loading="loading">
             <a-form layout="vertical" ref="formRef" :model="form" :rules="rules" @submit="handleSubmit" :hideRequiredMark="true">
                 <a-form-item class="mb-10" label="Факультет" name="faculties" :colon="false">
-                    <vSelect :options="data.academies" :reduce="val=>val.id" :multiple="true" v-model="form.faculties" :clearable="true" :closeOnSelect="false" label="name" :selectable="car => !car.disabled">
-                    </vSelect>
+                    <a-select :labelInValue="false" v-model:value="form.faculties" mode="multiple" :options="data.academies" :field-names="{ label: 'label', value: 'value', options: 'children' }"></a-select>
                 </a-form-item>
+
                 <a-form-item class="mb-10" label="Роль" name="faculties" :colon="false">
-                    <vSelect label="title" :options="data.roles" :reduce="val=>val.id" :multiple="true" v-model:value="form.roles" :clearable="false" />
-                    <!-- <a-select v-model:value="form.roles" mode="multiple" :options="data.roles"></a-select> -->
+                    <a-select v-model:value="form.roles" mode="multiple" :options="data.roles"></a-select>
                 </a-form-item>
+
                 <a-form-item class="mb-10" label="Имя" name="name" :colon="false">
                     <a-input v-model:value="form.name" />
                 </a-form-item>
@@ -31,14 +31,9 @@
 <script>
 import { notification } from 'ant-design-vue';
 
-import vSelect from "vue-select";
-import "vue-select/dist/vue-select.css";
 
 export default ({
 
-    components: {
-        vSelect,
-    },
 
     data() {
         return {
@@ -114,32 +109,23 @@ export default ({
             this.$axios.get('/users/create')
                 .then(response => {
                     let academies = response.data.meta.academies
-
-                    let transformedAcademies = academies.flatMap(academy => [
-                        { name: `Академия ${academy.name}`, disabled: true },
-                        ...academy.faculties.map(faculty => ({
-                            name: `Факультет ${faculty.name}`,
-                            id: faculty.id,
-                            disabled: false,
+                    let transformedAcademies = academies.map(academy => ({
+                        label: `Академия ${academy.name}`,
+                        value: academy.id,
+                        children: academy.faculties.map(faculty => ({
+                            label: `Факультет ${faculty.name}`,
+                            value: faculty.id,
                         }))
-                    ]);
+                    }));
+                    let transformedRoles = response.data.meta.roles.map(role => ({
+                        label: role.title,
+                        value: role.id,
+                    }));
 
-                    // let transformedAcademies = academies.map(academy => ({
-                    //     label: `Академия ${academy.name}`,
-                    //     options: academy.faculties.map(faculty => ({
-                    //         label: `Факультет ${faculty.name}`,
-                    //         value: faculty.id.toString(),
-                    //     }))
-                    // }));
-                    // let transformedRoles = response.data.meta.roles.map(role => ({
-                    //     label: role.title,
-                    //     id: role.id.toString(),
-                    // }));
-
-                    // console.log(transformedAcademies)
+                    console.log(transformedAcademies)
 
                     this.data = {
-                        roles: response.data.meta.roles,
+                        roles: transformedRoles,
                         academies: transformedAcademies
                     }
                     // this.form = response.data.data;
@@ -151,17 +137,15 @@ export default ({
             this.loading = true;
             this.$axios.get('/users/' + id)
                 .then(response => {
-                    // let transformedRoles = response.data.data.roles.map(role => ({
-                    //   label: role.title,
-                    //   value: role.id.toString(),
-                    // }));
-
-
+                    let transformedRoles = response.data.data.roles.map(role => (role.id));
+                    
+                    let transformedAcademies = response.data.data.faculties.map(faculty => (faculty.id));
 
 
                     this.form = response.data.data
-                    // this.form.roles = transformedRoles;
-                    // this.form.faculties = transformedAcademies;
+
+                    this.form.roles = transformedRoles;
+                    this.form.faculties = transformedAcademies;
 
                     // router.push({ name: 'Academy', params: {academy_id: } })
                 })
@@ -207,6 +191,13 @@ export default ({
 
             console.log(data);
 
+            // if(!isFlatArray(data.roles)){
+            //   data.roles = data.roles.map(role => role.value);
+            // }
+            // if(!isFlatArray(data.faculties)){
+            //   data.faculties = data.faculties.map(faculty => faculty.value);
+            // }
+
             let formData = data
 
             this.$axios.post(url, formData)
@@ -233,5 +224,17 @@ export default ({
         },
     }
 })
+
+// function isFlatArray(arr) {
+//     if (!Array.isArray(arr)) {
+//         return false;
+//     }
+//     for (let i = 0; i < arr.length; i++) {
+//         if (typeof arr[i] !== 'number' && typeof arr[i] !== 'string' && typeof arr[i] !== 'boolean' && arr[i] !== null && arr[i] !== undefined) {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
 
 </script>

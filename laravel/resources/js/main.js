@@ -29,7 +29,6 @@ import EmptyLayout from './layouts/Empty.vue'
 import router from './router'
 // import './plugins/click-away'
 import axios from './libs/auth/axios';
-// import vSelect from "vue-select-3";
 
 
 
@@ -40,11 +39,6 @@ const app  = createApp({
 app.config.globalProperties.$axios = axios;
 app.use(router);
 app.use(Antd);
-// app.component('v-select', vSelect)
-// Vue.component("v-select", vSelect);
-
-// app.use(vSelect);
-// Vue.component("v-select", vSelect);
 
 
 
