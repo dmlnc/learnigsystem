@@ -27,7 +27,7 @@
                         <img alt="example" src="https://doodleipsum.com/900x525/flat?i=5087a915dddcb6e95b5262e070332347" />
                     </template>
                     <template class="ant-card-actions" #actions>
-                        <router-link :to="{ name: 'Academies-page'}"> Перейти</router-link>
+                        <router-link :to="{ name: 'Courses-page'}"> Перейти</router-link>
                     </template>
                     <a-card-meta title="Курсы" description="Страница просмотра всех курсов">
                     </a-card-meta>
@@ -39,7 +39,7 @@
                         <img alt="example" src="https://doodleipsum.com/900x525/flat?i=330e732c9b45f0dbb3a6728d57e02977" />
                     </template>
                     <template class="ant-card-actions" #actions>
-                        <router-link :to="{ name: 'Academies-page'}"> Перейти</router-link>
+                        <router-link :to="{ name: 'Users-page'}"> Перейти</router-link>
                     </template>
                     <a-card-meta title="Пользователи" description="Страница просмотра всех пользователей">
                     </a-card-meta>
