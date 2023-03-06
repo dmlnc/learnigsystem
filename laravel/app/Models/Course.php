@@ -35,7 +35,7 @@ class Course extends Model implements HasMedia
 
     protected $orderable = [
         'id',
-        'teacher.name',
+        // 'teacher.name',
         'title',
         'description',
         'price',
@@ -44,15 +44,15 @@ class Course extends Model implements HasMedia
 
     protected $filterable = [
         'id',
-        'teacher.name',
+        // 'teacher.name',
         'title',
         'description',
-        'price',
-        'students.name',
+        // 'price',
+        // 'students.name',
     ];
 
     protected $fillable = [
-        'teacher_id',
+        // 'teacher_id',
         'title',
         'description',
         'price',
@@ -89,10 +89,10 @@ class Course extends Model implements HasMedia
 
     }
 
-    public function teacher()
-    {
-        return $this->belongsTo(User::class);
-    }
+    // public function teacher()
+    // {
+    //     return $this->belongsTo(User::class);
+    // }
 
     public function getThumbnailAttribute()
     {
@@ -107,10 +107,16 @@ class Course extends Model implements HasMedia
         });
     }
 
-    public function students()
+    // public function students()
+    // {
+    //     return $this->belongsToMany(User::class);
+    // }
+
+    public function faculties()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(Faculty::class);
     }
+
 
     public function lessons()
     {

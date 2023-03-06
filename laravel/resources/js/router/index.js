@@ -56,12 +56,12 @@ let routes = [{
         component: () => import( /* webpackChunkName: "dashboard" */ '../views/Courses.vue'),
     },
 
-    {
-        path: '/courses/:course_id',
-        name: 'Lessons-page',
-        layout: "dashboard",
-        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Lessons.vue'),
-    },
+    // {
+    //     path: '/courses/:course_id',
+    //     name: 'Lessons-page',
+    //     layout: "dashboard",
+    //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/Lessons.vue'),
+    // },
 
 
 

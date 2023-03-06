@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
+use App\Models\Academy;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,12 +24,14 @@ class CoursesApiController extends Controller
     public function store(StoreCourseRequest $request)
     {
         $course = Course::create($request->validated());
-        // $course->students()->sync($request->input('students.*.id', []));
-        // if ($media = $request->input('thumbnail', [])) {
-        //     Media::whereIn('id', data_get($media, '*.id'))
-        //         ->where('model_id', 0)
-        //         ->update(['model_id' => $course->id]);
-        // }
+
+        $course->faculties()->sync($request->input('faculties', []));
+
+        if ($media = $request->input('thumbnail', [])) {
+            Media::whereIn('id', data_get($media, '*.id'))
+                ->where('model_id', 0)
+                ->update(['model_id' => $course->id]);
+        }
 
         return (new CourseResource($course))
             ->response()
@@ -38,10 +41,11 @@ class CoursesApiController extends Controller
     public function create()
     {
 
+        $user = auth()->user();
+
         return response([
             'meta' => [
-                'teacher'  => User::get(['id', 'name']),
-                'students' => User::get(['id', 'name']),
+                'faculties' => Academy::where('company_id', $user->company_id)->with(['faculties'])->get(['id', 'name'])
             ],
         ]);
     }
@@ -66,13 +70,13 @@ class CoursesApiController extends Controller
     public function edit(Course $course)
     {
 
-        return response([
-            'data' => new CourseResource($course->load(['teacher', 'students'])),
-            'meta' => [
-                'teacher'  => User::get(['id', 'name']),
-                'students' => User::get(['id', 'name']),
-            ],
-        ]);
+        // return response([
+        //     'data' => new CourseResource($course->load(['teacher', 'students'])),
+        //     'meta' => [
+        //         'teacher'  => User::get(['id', 'name']),
+        //         'students' => User::get(['id', 'name']),
+        //     ],
+        // ]);
     }
 
     public function destroy(Course $course)
@@ -95,7 +99,7 @@ class CoursesApiController extends Controller
         $model         = new Course();
         $model->id     = $request->input('model_id', 0);
         $model->exists = true;
-        $media         = $model->addMediaFromRequest('file')->toMediaCollection($request->input('collection_name'));
+        $media         = $model->addMediaFromRequest('file')->toMediaCollection($request->input('collection_name', 'course_thumbnail'));
 
         return response()->json($media, Response::HTTP_CREATED);
     }
