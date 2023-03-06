@@ -18,7 +18,7 @@ class CoursesApiController extends Controller
     public function index()
     {
 
-        return new CourseResource(Course::with(['teacher', 'students'])->get());
+        return new CourseResource(Course::with(['faculties'])->get());
     }
 
     public function store(StoreCourseRequest $request)
