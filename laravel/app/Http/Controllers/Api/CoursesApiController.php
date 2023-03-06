@@ -45,7 +45,7 @@ class CoursesApiController extends Controller
 
         return response([
             'meta' => [
-                'faculties' => Academy::where('company_id', $user->company_id)->with(['faculties'])->get(['id', 'name'])
+                'academies' => Academy::where('company_id', $user->company_id)->with(['faculties'])->get(['id', 'name'])
             ],
         ]);
     }
@@ -53,7 +53,7 @@ class CoursesApiController extends Controller
     public function show(Course $course)
     {
 
-        return new CourseResource($course->load(['faculties']));
+        return new CourseResource($course->load(['faculties', ]));
     }
 
     public function update(UpdateCourseRequest $request, Course $course)
