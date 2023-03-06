@@ -15,6 +15,7 @@
         "vue": "^3.2.15"
     },
     "dependencies": {
+        "@ant-design/icons-vue": "^6.1.0",
         "ant-design-vue": "^3.2.15",
         "core-js": "^3.29.0",
         "vue-router": "^4.1.6"

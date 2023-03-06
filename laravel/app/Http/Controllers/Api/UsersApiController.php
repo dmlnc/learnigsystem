@@ -25,11 +25,16 @@ class UsersApiController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $user = User::create($request->validated());
+        $data = $request->validated();
+
+        $authUser = auth()->user();
+        $data['company_id'] = $authUser->company_id;
+
+        $user = User::create();
         $user->roles()->sync($request->input('roles', []));
         $user->faculties()->sync($request->input('faculties', []));
-        $authUser = auth()->user();
-        $user->company_id = $authUser->company_id;
+      
+        
 
         return (new UserResource($user))
             ->response()

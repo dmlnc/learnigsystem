@@ -24,27 +24,18 @@ class UpdateCourseRequest extends FormRequest
                 'string',
                 'required',
             ],
-            'price' => [
-                'numeric',
-                'nullable',
-            ],
-            'thumbnail' => [
-                'array',
-                'nullable',
-            ],
-            'thumbnail.*.id' => [
-                'integer',
-                'exists:media,id',
-            ],
             'is_published' => [
                 'boolean',
             ],
-            'students' => [
+            'images' => [
+                'array'
+            ],
+            'faculties' => [
                 'array',
             ],
-            'students.*.id' => [
+            'faculties.*' => [
                 'integer',
-                'exists:users,id',
+                'exists:faculties,id',
             ],
         ];
     }

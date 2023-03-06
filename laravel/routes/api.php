@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UsersApiController;
 
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MediaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,8 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']
     Route::apiResource('academies/{academy}/faculties', FacultyApiController::class);
     Route::resource('courses', CoursesApiController::class);
     Route::post('/courses/media', [CoursesApiController::class, 'storeMedia']);
+    Route::delete('/media/{media_id}', [MediaController::class, 'deleteMedia']);
+
 
 
     Route::post('/logout', 'AuthController@logout');

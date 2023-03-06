@@ -20,7 +20,6 @@ class Course extends Model implements HasMedia
     public $table = 'courses';
 
     protected $appends = [
-        'thumbnail',
     ];
 
     protected $casts = [
@@ -55,7 +54,7 @@ class Course extends Model implements HasMedia
         // 'teacher_id',
         'title',
         'description',
-        'price',
+        'company_id',
         'is_published',
         'created_at',
         'updated_at',
@@ -64,14 +63,14 @@ class Course extends Model implements HasMedia
 
     public function registerMediaConversions(Media $media = null): void
     {
-        $thumbnailWidth  = 50;
-        $thumbnailHeight = 50;
+        $thumbnailWidth  = 300;
+        $thumbnailHeight = 300;
 
-        $thumbnailPreviewWidth  = 120;
-        $thumbnailPreviewHeight = 120;
+        $thumbnailPreviewWidth  = 500;
+        $thumbnailPreviewHeight = 500;
 
-        $previewWidth = 1000;
-        $previewHeight = 500;
+        $previewWidth = 900;
+        $previewHeight = 900;
 
         $this->addMediaConversion('thumbnail')
             ->width($thumbnailWidth)
@@ -94,7 +93,7 @@ class Course extends Model implements HasMedia
     //     return $this->belongsTo(User::class);
     // }
 
-    public function getThumbnailAttribute()
+    public function images()
     {
         return $this->getMedia('course_thumbnail')->map(function ($item) {
             $media = $item->toArray();
@@ -107,11 +106,23 @@ class Course extends Model implements HasMedia
         });
     }
 
-    // public function students()
-    // {
-    //     return $this->belongsToMany(User::class);
-    // }
 
+    public function thumbnail()
+    {
+        return $this->getMedia('course_thumbnail')->map(function ($item) {
+            $media = $item->toArray();
+            $media['url'] = $item->getUrl();
+            $media['thumbnail'] = $item->getUrl('thumbnail');
+            $media['preview_thumbnail'] = $item->getUrl('preview_thumbnail');
+            $media['preview'] = $item->getUrl('preview');
+
+            return $media;
+        });
+    }
+
+    
+
+   
     public function faculties()
     {
         return $this->belongsToMany(Faculty::class, 'faculty_course');

@@ -27,6 +27,16 @@ class StoreCourseRequest extends FormRequest
             'is_published' => [
                 'boolean',
             ],
+            'images' => [
+                'array'
+            ],
+            'faculties' => [
+                'array',
+            ],
+            'faculties.*' => [
+                'integer',
+                'exists:faculties,id',
+            ],
         ];
     }
 }

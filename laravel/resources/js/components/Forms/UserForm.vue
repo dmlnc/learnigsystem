@@ -128,8 +128,6 @@ export default ({
                         roles: transformedRoles,
                         academies: transformedAcademies
                     }
-                    // this.form = response.data.data;
-                    // router.push({ name: 'Academy', params: {academy_id: } })
                 })
         },
 

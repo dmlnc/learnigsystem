@@ -15,7 +15,7 @@ import Antd from 'ant-design-vue';
 
 import './scss/app.scss';
 import 'ant-design-vue/dist/antd.css';
-// import 'ant-design-vue/dist/antd.dark.css';
+import 'ant-design-vue/dist/antd.dark.css';
 
 
 import { createApp, h } from 'vue';
