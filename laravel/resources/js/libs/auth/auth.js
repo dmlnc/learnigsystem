@@ -1,6 +1,6 @@
 import axios from './axios';
 
-export default function setAuthToken(token) {
+export function setAuthToken(token) {
    if (token) {
     // Apply authorization token to every request if logged in
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -15,7 +15,7 @@ export default function setAuthToken(token) {
 }
 
 
-export default function getAuthToken() {
+export function getAuthToken() {
   const isAuthenticated = localStorage.getItem('access_token');
   return isAuthenticated;
 }
