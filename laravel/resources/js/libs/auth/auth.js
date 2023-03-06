@@ -15,7 +15,7 @@ const authFunctions = {
             // Remove token from local storage
             localStorage.removeItem('access_token');
         }
-    }
+    },
 
 
     getAuthToken() {
