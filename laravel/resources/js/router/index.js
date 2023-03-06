@@ -154,13 +154,13 @@ const router = createRouter({
     }
 });
 
-import setAuthToken from '@/libs/auth/auth';
+import AuthUtil from '@/libs/auth/auth';
 
 
 router.beforeEach((to, from, next) => {
     const isAuthenticated = localStorage.getItem('access_token');
     if (isAuthenticated) {
-        setAuthToken(isAuthenticated);
+        AuthUtil.setAuthToken(isAuthenticated);
     }
 
     if (!isAuthenticated && to.name !== 'Sign-In') {
