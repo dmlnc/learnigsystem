@@ -10,6 +10,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('company_id')->nullable();
             $table->string('name');
             $table->string('email')->unique();
             $table->datetime('email_verified_at')->nullable();
@@ -18,7 +19,11 @@ class CreateUsersTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            // Относится к компании
+            $table->foreign('company_id')
+                  ->references('id')
+                  ->on('companies')
+                  ->onDelete('cascade');
+
         });
     }
 }

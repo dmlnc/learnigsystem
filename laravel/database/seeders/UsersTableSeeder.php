@@ -14,11 +14,13 @@ class UsersTableSeeder extends Seeder
                 'id'             => 1,
                 'name'           => 'Admin',
                 'email'          => 'admin@admin.com',
+                'company_id'     => 1,
                 'password'       => bcrypt('password'),
                 'remember_token' => null,
             ],
             [
                 'id'             => 2,
+                'company_id'     => 1,
                 'name'           => 'Student',
                 'email'          => 'student@student.com',
                 'password'       => bcrypt('password'),

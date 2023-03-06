@@ -10,12 +10,18 @@ class CreateCoursesTable extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('company_id')->nullable();
             $table->string('title');
             $table->longText('description');
             $table->decimal('price', 15, 2)->nullable();
             $table->boolean('is_published')->default(0)->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('company_id')
+                  ->references('id')
+                  ->on('companies')
+                  ->onDelete('cascade');
         });
     }
 }

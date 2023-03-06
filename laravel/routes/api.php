@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\AcademyApiController;
+use App\Http\Controllers\Api\FacultyApiController;
+use App\Http\Controllers\Api\UsersApiController;
+
+
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +20,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {
+    // Route::get('/user', 'UserController@getUser');
+    Route::resource('users', UsersApiController::class);
+
+
+    Route::apiResource('academies', AcademyApiController::class);
+    Route::apiResource('academies/{academy}/faculties', FacultyApiController::class);
+
+
+    Route::post('/logout', 'AuthController@logout');
 });
+
+Route::post('v1/login', [AuthController::class, 'login']);

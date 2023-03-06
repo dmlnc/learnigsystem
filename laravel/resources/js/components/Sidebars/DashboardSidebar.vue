@@ -1,68 +1,58 @@
 <template>
-	
-	<!-- Main Sidebar -->
-	<a-layout-sider
-		collapsible
-		class="sider-primary"
-		breakpoint="lg"
-		collapsed-width="0"
-		width="250px"
-		:collapsed="sidebarCollapsed"
-		@collapse="$emit('toggleSidebar', ! sidebarCollapsed)"
-		:trigger="null"
-		:class="['ant-layout-sider-' + sidebarColor, 'ant-layout-sider-' + sidebarTheme]"
-		theme="light"
-		:style="{ backgroundColor: 'transparent',}">
-			<div class="brand"><img src="images/logo-ct-black.png" alt=""> <span>Muse Dashboard</span></div>
-			<hr>
-
-			<!-- Sidebar Navigation Menu -->
-			<a-menu theme="light" mode="inline">
-				<a-menu-item>
-					<router-link to="/dashboard">
-						<span class="icon">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M3 4C3 3.44772 3.44772 3 4 3H16C16.5523 3 17 3.44772 17 4V6C17 6.55228 16.5523 7 16 7H4C3.44772 7 3 6.55228 3 6V4Z" fill="#111827"/>
-								<path d="M3 10C3 9.44771 3.44772 9 4 9H10C10.5523 9 11 9.44771 11 10V16C11 16.5523 10.5523 17 10 17H4C3.44772 17 3 16.5523 3 16V10Z" fill="#111827"/>
-								<path d="M14 9C13.4477 9 13 9.44771 13 10V16C13 16.5523 13.4477 17 14 17H16C16.5523 17 17 16.5523 17 16V10C17 9.44771 16.5523 9 16 9H14Z" fill="#111827"/>
-							</svg>
-						</span>
-						<span class="label">Dashboard</span>
-					</router-link>
-				</a-menu-item>
-				<a-menu-item>
-					<router-link to="/tables">
-						<span class="icon">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M9 2C8.44772 2 8 2.44772 8 3C8 3.55228 8.44772 4 9 4H11C11.5523 4 12 3.55228 12 3C12 2.44772 11.5523 2 11 2H9Z" fill="#111827"/>
-								<path fill-rule="evenodd" clip-rule="evenodd" d="M4 5C4 3.89543 4.89543 3 6 3C6 4.65685 7.34315 6 9 6H11C12.6569 6 14 4.65685 14 3C15.1046 3 16 3.89543 16 5V16C16 17.1046 15.1046 18 14 18H6C4.89543 18 4 17.1046 4 16V5ZM7 9C6.44772 9 6 9.44772 6 10C6 10.5523 6.44772 11 7 11H7.01C7.56228 11 8.01 10.5523 8.01 10C8.01 9.44772 7.56228 9 7.01 9H7ZM10 9C9.44772 9 9 9.44772 9 10C9 10.5523 9.44772 11 10 11H13C13.5523 11 14 10.5523 14 10C14 9.44772 13.5523 9 13 9H10ZM7 13C6.44772 13 6 13.4477 6 14C6 14.5523 6.44772 15 7 15H7.01C7.56228 15 8.01 14.5523 8.01 14C8.01 13.4477 7.56228 13 7.01 13H7ZM10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15H13C13.5523 15 14 14.5523 14 14C14 13.4477 13.5523 13 13 13H10Z" fill="#111827"/>
-							</svg>
-						</span>
-						<span class="label">Tables</span>
-					</router-link>
-				</a-menu-item>
-				<a-menu-item>
-					<router-link to="/billing">
-						<span class="icon">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M4 4C2.89543 4 2 4.89543 2 6V7H18V6C18 4.89543 17.1046 4 16 4H4Z" fill="#111827"/>
-								<path fill-rule="evenodd" clip-rule="evenodd" d="M18 9H2V14C2 15.1046 2.89543 16 4 16H16C17.1046 16 18 15.1046 18 14V9ZM4 13C4 12.4477 4.44772 12 5 12H6C6.55228 12 7 12.4477 7 13C7 13.5523 6.55228 14 6 14H5C4.44772 14 4 13.5523 4 13ZM9 12C8.44772 12 8 12.4477 8 13C8 13.5523 8.44772 14 9 14H10C10.5523 14 11 13.5523 11 13C11 12.4477 10.5523 12 10 12H9Z" fill="#111827"/>
-							</svg>
-						</span>
-						<span class="label">Billing</span>
-					</router-link>
-				</a-menu-item>
-				<a-menu-item>
-					<router-link to="/rtl">
-						<span class="icon">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path fill-rule="evenodd" clip-rule="evenodd" d="M3 6C3 4.34315 4.34315 3 6 3H16C16.3788 3 16.725 3.214 16.8944 3.55279C17.0638 3.89157 17.0273 4.29698 16.8 4.6L14.25 8L16.8 11.4C17.0273 11.703 17.0638 12.1084 16.8944 12.4472C16.725 12.786 16.3788 13 16 13H6C5.44772 13 5 13.4477 5 14V17C5 17.5523 4.55228 18 4 18C3.44772 18 3 17.5523 3 17V6Z" fill="#111827"/>
-							</svg>
-						</span>
-						<span class="label">RTL</span>
-					</router-link>
-				</a-menu-item>
-				<a-menu-item class="menu-item-header">
+    <!-- Main Sidebar -->
+    <a-layout-sider collapsible class="sider-primary" breakpoint="lg" collapsed-width="0" width="250px" :collapsed="sidebarCollapsed" @collapse="$emit('toggleSidebar', ! sidebarCollapsed)" :trigger="null" :class="['ant-layout-sider-' + sidebarColor, 'ant-layout-sider-' + sidebarTheme]" theme="light" :style="{ backgroundColor: 'transparent',}">
+        <div class="brand">
+            <!-- <img src="images/logo-ct-black.png" alt="">  -->
+            <span>Система обучения</span>
+        </div>
+        <hr>
+        <!-- Sidebar Navigation Menu -->
+        <a-menu theme="light" mode="inline">
+            <a-menu-item>
+                <router-link to="/dashboard">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.7071 2.29289C10.3166 1.90237 9.68342 1.90237 9.29289 2.29289L2.29289 9.29289C1.90237 9.68342 1.90237 10.3166 2.29289 10.7071C2.68342 11.0976 3.31658 11.0976 3.70711 10.7071L4 10.4142V17C4 17.5523 4.44772 18 5 18H7C7.55228 18 8 17.5523 8 17V15C8 14.4477 8.44772 14 9 14H11C11.5523 14 12 14.4477 12 15V17C12 17.5523 12.4477 18 13 18H15C15.5523 18 16 17.5523 16 17V10.4142L16.2929 10.7071C16.6834 11.0976 17.3166 11.0976 17.7071 10.7071C18.0976 10.3166 18.0976 9.68342 17.7071 9.29289L10.7071 2.29289Z" fill="#ffffff"></path></svg>
+                    </span>
+                    <span class="label">Главная</span>
+                </router-link>
+            </a-menu-item>
+            <a-menu-item>
+                <router-link to="/academies">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 4C3 3.44772 3.44772 3 4 3H16C16.5523 3 17 3.44772 17 4V6C17 6.55228 16.5523 7 16 7H4C3.44772 7 3 6.55228 3 6V4Z" fill="#111827" />
+                            <path d="M3 10C3 9.44771 3.44772 9 4 9H10C10.5523 9 11 9.44771 11 10V16C11 16.5523 10.5523 17 10 17H4C3.44772 17 3 16.5523 3 16V10Z" fill="#111827" />
+                            <path d="M14 9C13.4477 9 13 9.44771 13 10V16C13 16.5523 13.4477 17 14 17H16C16.5523 17 17 16.5523 17 16V10C17 9.44771 16.5523 9 16 9H14Z" fill="#111827" />
+                        </svg>
+                    </span>
+                    <span class="label">Академии</span>
+                </router-link>
+            </a-menu-item>
+            <a-menu-item>
+                <router-link to="/tables">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 2C8.44772 2 8 2.44772 8 3C8 3.55228 8.44772 4 9 4H11C11.5523 4 12 3.55228 12 3C12 2.44772 11.5523 2 11 2H9Z" fill="#111827" />
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M4 5C4 3.89543 4.89543 3 6 3C6 4.65685 7.34315 6 9 6H11C12.6569 6 14 4.65685 14 3C15.1046 3 16 3.89543 16 5V16C16 17.1046 15.1046 18 14 18H6C4.89543 18 4 17.1046 4 16V5ZM7 9C6.44772 9 6 9.44772 6 10C6 10.5523 6.44772 11 7 11H7.01C7.56228 11 8.01 10.5523 8.01 10C8.01 9.44772 7.56228 9 7.01 9H7ZM10 9C9.44772 9 9 9.44772 9 10C9 10.5523 9.44772 11 10 11H13C13.5523 11 14 10.5523 14 10C14 9.44772 13.5523 9 13 9H10ZM7 13C6.44772 13 6 13.4477 6 14C6 14.5523 6.44772 15 7 15H7.01C7.56228 15 8.01 14.5523 8.01 14C8.01 13.4477 7.56228 13 7.01 13H7ZM10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15H13C13.5523 15 14 14.5523 14 14C14 13.4477 13.5523 13 13 13H10Z" fill="#111827" />
+                        </svg>
+                    </span>
+                    <span class="label">Курсы</span>
+                </router-link>
+            </a-menu-item>
+            <a-menu-item>
+                <router-link to="/users">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 6C9 7.65685 7.65685 9 6 9C4.34315 9 3 7.65685 3 6C3 4.34315 4.34315 3 6 3C7.65685 3 9 4.34315 9 6Z" fill="#111827" />
+                            <path d="M17 6C17 7.65685 15.6569 9 14 9C12.3431 9 11 7.65685 11 6C11 4.34315 12.3431 3 14 3C15.6569 3 17 4.34315 17 6Z" fill="#111827" />
+                            <path d="M12.9291 17C12.9758 16.6734 13 16.3395 13 16C13 14.3648 12.4393 12.8606 11.4998 11.6691C12.2352 11.2435 13.0892 11 14 11C16.7614 11 19 13.2386 19 16V17H12.9291Z" fill="#111827" />
+                            <path d="M6 11C8.76142 11 11 13.2386 11 16V17H1V16C1 13.2386 3.23858 11 6 11Z" fill="#111827" />
+                        </svg>
+                    </span>
+                    <span class="label">Пользователи</span>
+                </router-link>
+            </a-menu-item>
+            <!-- 		<a-menu-item class="menu-item-header">
 					Account Pages
 				</a-menu-item>
 				<a-menu-item>
@@ -106,65 +96,56 @@
 						</span>
 						<span class="label">Sign Up</span>
 					</router-link>
-				</a-menu-item>
-			</a-menu>
-			<!-- / Sidebar Navigation Menu -->
-
-			<!-- Sidebar Footer -->
-			<div class="aside-footer">
-				<div class="footer-box">
-					<span class="icon">
-						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M3 4C3 3.44772 3.44772 3 4 3H16C16.5523 3 17 3.44772 17 4V6C17 6.55228 16.5523 7 16 7H4C3.44772 7 3 6.55228 3 6V4Z" fill="#111827"/>
-							<path d="M3 10C3 9.44771 3.44772 9 4 9H10C10.5523 9 11 9.44771 11 10V16C11 16.5523 10.5523 17 10 17H4C3.44772 17 3 16.5523 3 16V10Z" fill="#111827"/>
-							<path d="M14 9C13.4477 9 13 9.44771 13 10V16C13 16.5523 13.4477 17 14 17H16C16.5523 17 17 16.5523 17 16V10C17 9.44771 16.5523 9 16 9H14Z" fill="#111827"/>
-						</svg>
-					</span>
-					<h6>Need Help?</h6>
-					<p>Please check our docs</p>
-					<a-button type="primary" href="https://demos.creative-tim.com/muse-vue-ant-design-dashboard/documentation" block target="_blank">
-						DOCUMENTATION
-					</a-button>
-				</div>
-			</div>
-			<!-- / Sidebar Footer -->
-
-			<a-button type="primary" href="https://www.creative-tim.com/product/muse-vue-ant-design-dashboard-pro" block target="_blank">
-				UPGRADE TO PRO
-			</a-button>
-
-	</a-layout-sider>
-	<!-- / Main Sidebar -->
-
+				</a-menu-item> -->
+        </a-menu>
+        <!-- / Sidebar Navigation Menu -->
+        <!-- Sidebar Footer -->
+        <div class="aside-footer">
+            <div class="footer-box">
+                <span class="icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 4C3 3.44772 3.44772 3 4 3H16C16.5523 3 17 3.44772 17 4V6C17 6.55228 16.5523 7 16 7H4C3.44772 7 3 6.55228 3 6V4Z" fill="#111827" />
+                        <path d="M3 10C3 9.44771 3.44772 9 4 9H10C10.5523 9 11 9.44771 11 10V16C11 16.5523 10.5523 17 10 17H4C3.44772 17 3 16.5523 3 16V10Z" fill="#111827" />
+                        <path d="M14 9C13.4477 9 13 9.44771 13 10V16C13 16.5523 13.4477 17 14 17H16C16.5523 17 17 16.5523 17 16V10C17 9.44771 16.5523 9 16 9H14Z" fill="#111827" />
+                    </svg>
+                </span>
+                <h6>Need Help?</h6>
+                <p>Please check our docs</p>
+                <a-button type="primary" href="https://demos.creative-tim.com/muse-vue-ant-design-dashboard/documentation" block target="_blank">
+                    DOCUMENTATION
+                </a-button>
+            </div>
+        </div>
+        <!-- / Sidebar Footer -->
+    </a-layout-sider>
+    <!-- / Main Sidebar -->
 </template>
-
 <script>
+export default ({
+    props: {
+        // Sidebar collapsed status.
+        sidebarCollapsed: {
+            type: Boolean,
+            default: false,
+        },
 
-	export default ({
-		props: {
-			// Sidebar collapsed status.
-			sidebarCollapsed: {
-				type: Boolean,
-				default: false,
-			},
-			
-			// Main sidebar color.
-			sidebarColor: {
-				type: String,
-				default: "primary",
-			},
-			
-			// Main sidebar theme : light, white, dark.
-			sidebarTheme: {
-				type: String,
-				default: "light",
-			},
-		},
-		data() {
-			return {
-				// sidebarCollapsedModel: this.sidebarCollapsed,
-			}
-		},
-	})
+        // Main sidebar color.
+        sidebarColor: {
+            type: String,
+            default: "primary",
+        },
+
+        // Main sidebar theme : light, white, dark.
+        sidebarTheme: {
+            type: String,
+            default: "light",
+        },
+    },
+    data() {
+        return {
+            // sidebarCollapsedModel: this.sidebarCollapsed,
+        }
+    },
+})
 
 </script>

@@ -72,7 +72,7 @@
 					<a-collapse-panel key="1">
 
 						<!-- Navigation Menu For Small Screens -->
-						<a-menu mode="vertical">
+						<!-- <a-menu mode="vertical">
 							<a-menu-item>
 								<router-link to="/dashboard" class="nav-link" @click="e => e.preventDefault()">
 									<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -118,7 +118,7 @@
 									<span>Sign Up</span>
 								</router-link>
 							</a-menu-item>
-						</a-menu>
+						</a-menu> -->
 						<!-- / Navigation Menu For Small Screens -->
 
 					</a-collapse-panel>
@@ -128,9 +128,6 @@
 			</div>
 			<!-- / Collapsible Navigation Menu For Small Screens -->
 
-		</div>
-		<div class="header-col header-btn">
-			<a-button href="https://www.creative-tim.com/product/muse-vue-ant-design-dashboard" target="_blank" type="primary" shape="round">FREE DOWNLOAD</a-button>
 		</div>
 	</a-layout-header>
 	<!-- / Layout Header ( Navbar ) -->

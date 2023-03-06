@@ -59,6 +59,9 @@
 
 
 <script>
+	import setAuthToken from '@/libs/auth/auth';
+	import router from '@/router'
+
 
 	export default ({
 		data() {
@@ -72,10 +75,10 @@
 				},
 				rules: {
       				email: [
-      				  { required: true, message: 'Please enter your email', trigger: 'blur' },
+      				  	{ required: true, message: 'Please enter your email', trigger: 'blur' },
       				],
       				password:[
-      					 { required: true, message: 'Please enter your email', trigger: 'blur' },
+      					{ required: true, message: 'Please enter your password', trigger: 'blur' },
       				]
       			}
 
@@ -103,7 +106,15 @@
 			},
 			submitForm(){
 				// sendAxios
-				console.log('sendAxios')
+				this.$axios.post('/login', this.form)
+  				.then(response => {
+  				  const token = response.data.token;
+  				  setAuthToken(token);
+  				  router.push({ name: 'Home' })
+  				})
+  				.catch(error => {
+  				  console.error(error);
+  				});
 			}
 		},
 	})

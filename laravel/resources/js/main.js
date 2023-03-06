@@ -15,6 +15,8 @@ import Antd from 'ant-design-vue';
 
 import './scss/app.scss';
 import 'ant-design-vue/dist/antd.css';
+// import 'ant-design-vue/dist/antd.dark.css';
+
 
 import { createApp, h } from 'vue';
 import App from './App.vue'
@@ -26,15 +28,17 @@ import EmptyLayout from './layouts/Empty.vue'
 // import DashboardRTLLayout from './layouts/DashboardRTL.vue'
 import router from './router'
 // import './plugins/click-away'
+import axios from './libs/auth/axios';
 
 
 
 const app  = createApp({
     render: ()=>h(App)
 });
+
+app.config.globalProperties.$axios = axios;
 app.use(router);
 app.use(Antd);
-
 
 
 
