@@ -62,7 +62,7 @@ let routes = [{
 
     {
         path: '/users',
-        name: 'Users',
+        name: 'Users-page',
         layout: "dashboard",
         component: () => import( /* webpackChunkName: "dashboard" */ '../views/Users.vue'),
     },

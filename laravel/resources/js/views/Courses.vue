@@ -49,7 +49,7 @@
                         <img alt="example" src="https://doodleipsum.com/900x525/outline?i=f9b600d9d2fd687422cee8090c384c28" />
                     </template>
                     <template class="ant-card-actions" #actions>
-                        <span @click="showForm(null)"> Создать</span>
+                        <div @click="showForm(null)"> Создать</div>
                     </template>
                     <a-card-meta title="Создать курс" description="">
                     </a-card-meta>
