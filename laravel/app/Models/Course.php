@@ -114,7 +114,7 @@ class Course extends Model implements HasMedia
 
     public function faculties()
     {
-        return $this->belongsToMany(Faculty::class);
+        return $this->belongsToMany(Faculty::class, 'faculty_course');
     }
 
 
