@@ -13,3 +13,9 @@ export default function setAuthToken(token) {
     localStorage.removeItem('access_token');
   }
 }
+
+
+export default function getAuthToken() {
+  const isAuthenticated = localStorage.getItem('access_token');
+  return isAuthenticated;
+}

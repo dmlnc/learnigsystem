@@ -53,7 +53,7 @@ class CoursesApiController extends Controller
     public function show(Course $course)
     {
 
-        return new CourseResource($course->load(['teacher', 'students']));
+        return new CourseResource($course->load(['faculties']));
     }
 
     public function update(UpdateCourseRequest $request, Course $course)
