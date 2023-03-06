@@ -59,7 +59,7 @@
 
 
 <script>
-	import setAuthToken from '@/libs/auth/auth';
+	import AuthUtil from '@/libs/auth/auth';
 	import router from '@/router'
 
 
@@ -109,7 +109,7 @@
 				this.$axios.post('/login', this.form)
   				.then(response => {
   				  const token = response.data.token;
-  				  setAuthToken(token);
+  				  AuthUtil.setAuthToken(token);
   				  router.push({ name: 'Home' })
   				})
   				.catch(error => {
