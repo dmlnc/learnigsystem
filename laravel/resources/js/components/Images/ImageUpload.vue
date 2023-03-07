@@ -8,9 +8,9 @@
                 <p class="ant-upload-text">Загрузить изображение({{allImages.length}}/{{maxCount}})</p>
             </a-upload-dragger>
         </div>
-        <a-list v-if="allImages.length" item-layout="horizontal" :data-source="allImages">
+        <a-list size="small" v-if="allImages.length" item-layout="horizontal" :data-source="allImages">
             <template #renderItem="{ item }">
-                <a-list-item>
+                <a-list-item class="p-5">
                     <template #actions v-if="!item.loading">
                         <a-button @click.prevent="deleteImage(item.id)" type="link" danger key="list-delete">
                             <delete-outlined />
@@ -40,13 +40,28 @@ import { notification } from 'ant-design-vue';
 import AuthUtil from '@/libs/auth/auth';
 
 export default ({
-    props: [
-        'action',
-        'id',
-        'images',
-        'maxCount',
-
-    ],
+    props: {
+        action: {
+            type: String,
+            required: true
+        },
+        // id: {
+        //     type: [Number, null],
+        //     default: null
+        // },
+        images: {
+            type: Array,
+            default: () => []
+        },
+        maxCount: {
+            type: Number,
+            default: 1
+        },
+        collection: {
+            type: [String, null],
+            default: null
+        }
+    },
     components: {
         InboxOutlined,
         DeleteOutlined
@@ -59,7 +74,7 @@ export default ({
             } else {
                 this.allImages = [];
             }
-
+            this.deletes = [];
             await this.getImages();
             this.emitSelectedIds();
         }
@@ -67,6 +82,7 @@ export default ({
 
     async mounted() {
         this.allImages = [...this.images];
+        this.deletes = [];
         await this.getImages();
         this.emitSelectedIds();
     },
@@ -74,23 +90,35 @@ export default ({
     data() {
         return {
             allImages: [],
+            deletes: [],
         }
     },
 
     computed: {
         getHeaders() {
-            return { 'Authorization': `Bearer ${AuthUtil.getAuthToken()}` }
-        },
+            let headers = {};
+            if (this.collection !== null) {
+                headers['collection_name'] = this.collection;
+            }
+            // if (this.id !== null) {
+            //     headers['model_id'] = this.id;
+            // }
+            headers['Authorization'] = `Bearer ${AuthUtil.getAuthToken()}`;
+            return headers;
+        }
 
     },
 
     methods: {
         deleteImage(id) {
             this.loading = true;
-            // let url = this.action;
+            this.allImages = this.allImages.filter(item => item.id != id);
+            this.deletes = [...this.deletes, id];
+
+            // TODO: Delete from db if model_id 0?
+
             this.$axios.delete('media/' + id)
                 .then(response => {
-                    this.allImages = this.allImages.filter(item => item.id != id);
                     notification.success({
                         message: 'Успешно',
                     });
@@ -131,9 +159,15 @@ export default ({
                     this.allImages.push({ loading: true, name: file.name, id: file.uid });
                 }
             } else if (status === 'error') {
+                notification.error({
+                    message: 'Ошибка',
+                });
                 // Remove object from allImages array with id = file.uid
                 this.allImages = this.allImages.filter(obj => obj.id !== file.uid);
             } else if (status === 'done') {
+                notification.success({
+                        message: 'Успешно',
+                });
                 // Find object in allImages array with id = file.uid
                 const imageIndex = this.allImages.findIndex(obj => obj.id === file.uid);
                 if (imageIndex >= 0) {
@@ -152,7 +186,7 @@ export default ({
                 }
             }
 
-            console.log(this.allImages)
+            // console.log(this.allImages)
 
         }
 
@@ -161,3 +195,12 @@ export default ({
 })
 
 </script>
+<style>
+.ant-list-item-meta-title {
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+</style>

@@ -6,7 +6,7 @@
                     <a-input v-model:value="form.title" />
                 </a-form-item>
                 <a-form-item  class="mb-10" label="Изображение" name="image" :colon="false" style="display: block">
-                    <ImageUpload v-model="form.images" action='courses/media' :id="initialId" :images="form.media" :maxCount="1"></ImageUpload>
+                    <ImageUpload v-model="form.images" action='courses/media' :images="form.media" :maxCount="1"></ImageUpload>
                 </a-form-item>
                 <!-- api/v1/courses/media -->
                 <!--  <a-upload v-model:file-list="fileList" name="file" :multiple="false" list-type="picture-card" class="avatar-uploader" :show-upload-list="true" :headers="{'Authorization': `Bearer ${getAuthToken}`}" action="api/v1/courses/media">
