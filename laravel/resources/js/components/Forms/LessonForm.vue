@@ -1,7 +1,7 @@
 <template>
   <a-drawer
       :title="'Урок ' + name"
-      :width="320"
+      :width="992"
       :visible="visible"
       :body-style="{ paddingBottom: '80px' }"
       :footer-style="{ textAlign: 'right' }"
@@ -17,46 +17,49 @@
           :hideRequiredMark="true"
       >
         <a-form-item class="mb-10" label="Изображение" name="image" :colon="false">
-
-          <a-upload
-              v-model:file-list="fileList"
-              name="file"
-              multiple="false"
-              list-type="picture-card"
-              class="avatar-uploader"
-              :show-upload-list="true"
-              :headers="{'Authorization': `Bearer ${getAuthToken}`}"
-              action="api/v1/lessons/media"
-          >
-            <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-            <div v-else>
-              <loading-outlined v-if="loading"></loading-outlined>
-              <plus-outlined v-else></plus-outlined>
-              <div class="ant-upload-text">Upload</div>
-            </div>
-          </a-upload>
+          <ImageUpload v-model="form.images" action='lessons/media' :images="form.media" :maxCount="1"></ImageUpload>
         </a-form-item>
-
-        <a-form-item class="mb-10" label="Факультет" name="faculties" :colon="false">
-          <!--          <v-select :options="data.academies" label="title"></v-select>-->
-          <a-select
-              :labelInValue="true"
-              v-model:value="form.faculties"
-              mode="multiple"
-              :options="data.academies"
-              :field-names="{ label: 'label', value: 'value', options: 'children' }">
-          </a-select>
-        </a-form-item>
-        <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
-          <a-textarea v-model:value="form.description" />
-        </a-form-item>
-
         <a-form-item class="mb-10" label="Название" name="title" :colon="false">
           <a-input
               v-model:value="form.title"
           />
         </a-form-item>
+        <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
+          <a-textarea v-model:value="form.short_text" />
+        </a-form-item>
 
+        <QuillEditor theme="snow"
+                     v-model:content="form.long_text"
+                     @ready="onEditorReady($event)"
+                     contentType="html"
+        />
+        <a-form-item class="mb-10" label="Видео" name="video" :colon="false">
+          <a-input v-model:value="form.video" />
+        </a-form-item>
+        <a-checkbox
+            v-model:value="form.is_free"
+            v-decorator="[
+						'is_free',
+						{
+							valuePropName: 'checked',
+							initialValue: true,
+						},
+						]"
+        >
+          Опубликовать
+        </a-checkbox>
+        <a-checkbox
+            v-model:value="form.is_published"
+            v-decorator="[
+						'is_published',
+						{
+							valuePropName: 'checked',
+							initialValue: false,
+						},
+						]"
+        >
+          Опубликовать
+        </a-checkbox>
         <a-form-item>
           <a-button type="primary" block html-type="submit" >
             Сохранить
@@ -74,11 +77,13 @@
 <script>
 
 
+import ImageUpload from '@/components/Images/ImageUpload.vue'
 
 import { notification } from 'ant-design-vue';
 import AuthUtil from '@/libs/auth/auth';
-
-
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import ImageUploader from 'quill-image-uploader';
 export default ({
 
 
@@ -91,17 +96,46 @@ export default ({
       imageUrl: null,
       initialForm: {
         title: '',
+        thumbnail:'',
+        video:'',
+        short_text:'',
+        long_text:'',
         description:'',
-        faculties: [],
+        position:'',
+        is_published:false,
+        is_free:true,
+        media:[],
+        images:[],
       },
       initialId: null,
       loading: false,
       form: {},
+      modules: {
+        name: 'imageUploader',
+        module: ImageUploader,
+        options: {
+          upload: file => {
+            return new Promise((resolve, reject) => {
+              const formData = new FormData();
+              formData.append("file", file);
+              axios.post('/lesson/media', formData)
+                  .then(res => {
+                    console.log(res)
+                    resolve(res.data.url);
+                  })
+                  .catch(err => {
+                    reject("Upload failed");
+                    console.error("Error:", err)
+                  })
+            })
+          }
+        }
+      },
       rules: {
         title: [
           { required: true, message: 'Введите название', trigger: 'blur' },
         ],
-        description: [
+        short_text: [
           { required: true, message: 'Введите описание', trigger: 'blur' },
         ],
       }
@@ -113,6 +147,8 @@ export default ({
     'visible'
   ],
   components:{
+    QuillEditor,ImageUploader,
+    ImageUpload,
   },
   computed:{
     getAuthToken(){
@@ -135,6 +171,7 @@ export default ({
   watch:{
     visible(){
       this.visibleForm = this.visible;
+      this.resetForm()
     },
     id(){
       this.initialId = this.id;
@@ -142,46 +179,23 @@ export default ({
         this.loadData(this.id)
       }
       else{
-
         this.loading = false;
       }
-
     },
   },
 
   mounted(){
     this.resetForm();
-    this.fetchCreate();
   },
 
   methods: {
-
+    onEditorReady (e) {
+      console.log(e);
+      e.container.querySelector('.ql-blank').innerHTML = this.form.long_text
+    },
     resetForm(){
-      this.form = this.initialForm;
+      this.form = {...this.initialForm, course_id: this.$route.params.course_id};
     },
-
-    fetchCreate() {
-      this.$axios.get('/lessons/create')
-          .then(response => {
-            let academies = response.data.meta.academies
-            let transformedAcademies = academies.map(academy => ({
-              label: `Академия ${academy.name}`,
-              value: academy.id.toString(),
-              children: academy.faculties.map(faculty => ({
-                label: `Факультет ${faculty.name}`,
-                value: faculty.id.toString(),
-              }))
-            }));
-
-            this.data = {
-              academies: transformedAcademies
-            }
-            // this.form = response.data.data;
-            // router.push({ name: 'Academy', params: {academy_id: } })
-          })
-    },
-
-
     loadData(id){
       this.loading = true;
       this.$axios.get('/lessons/'+id)
@@ -208,9 +222,6 @@ export default ({
 
     handleSubmit(e) {
       e.preventDefault();
-      // console.log(this.$refs.formRef.validate())
-      // // this.$refs.formRef.target.validate();
-      // console.log(this.form
       this.$refs.formRef
           .validate()
           .then((e) => {})
@@ -237,6 +248,7 @@ export default ({
             this.initialId = response.data.data.id;
             this.loadData(this.initialId);
             this.$emit('save');
+            this.$emit('close');
             notification.success({
               message: 'Успешно',
             });

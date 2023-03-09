@@ -97,7 +97,7 @@ export default ({
 
     loadData(){
       this.loading = true;
-      this.$axios.get('/course'+this.$route.params.course_id+'/tests')
+      this.$axios.get('/course'+this.$route.params.course_id+'/lesson'+ +this.$route.params.lesson_id+ '/tests')
           .then(response => {
             console.log(response)
             this.tests = response.data.data;

@@ -33,7 +33,7 @@ class StudyApiController extends Controller
 
     public function course(Request $request, Course $course)
     {
-        abort_if(($course->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(($course->is_published == 0), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $user = auth()->user();
         $hasAccess = $user->courses()->where('id', $course->id)->exists();
         abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');

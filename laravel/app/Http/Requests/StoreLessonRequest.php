@@ -26,14 +26,6 @@ class StoreLessonRequest extends FormRequest
                 'string',
                 'required',
             ],
-            'thumbnail' => [
-                'array',
-                'nullable',
-            ],
-            'thumbnail.*.id' => [
-                'integer',
-                'exists:media,id',
-            ],
             'short_text' => [
                 'string',
                 'nullable',
@@ -41,14 +33,6 @@ class StoreLessonRequest extends FormRequest
             'long_text' => [
                 'string',
                 'nullable',
-            ],
-            'video' => [
-                'string',
-                'nullable',
-            ],
-            'video.*.id' => [
-                'integer',
-                'exists:media,id',
             ],
             'position' => [
                 'integer',
@@ -61,6 +45,10 @@ class StoreLessonRequest extends FormRequest
             ],
             'is_free' => [
                 'boolean',
+            ],
+            'video'=>[
+                'string',
+                'nullable',
             ],
         ];
     }

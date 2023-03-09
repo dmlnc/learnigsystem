@@ -1,7 +1,7 @@
 <template>
   <a-drawer
       :title="'Тест ' + name"
-      :width="320"
+      :width="992"
       :visible="visible"
       :body-style="{ paddingBottom: '80px' }"
       :footer-style="{ textAlign: 'right' }"
@@ -16,58 +16,76 @@
           @submit="handleSubmit"
           :hideRequiredMark="true"
       >
-        <a-form-item class="mb-10" label="Изображение" name="image" :colon="false">
+        <a-tabs default-active-key="1" @change="callback">
+          <a-tab-pane key="1" tab="Основные">
+            <a-form-item class="mb-10" label="Изображение" name="image" :colon="false">
+              <ImageUpload v-model="form.images" action='lessons/media' :images="form.media" :maxCount="1"></ImageUpload>
+            </a-form-item>
+            <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
+              <a-textarea v-model:value="form.description" />
+            </a-form-item>
+            <a-form-item class="mb-10" label="Название" name="title" :colon="false">
+              <a-input
+                  v-model:value="form.title"
+              />
+            </a-form-item>
+            <a-checkbox
+                v-model:value="form.is_published"
+                v-decorator="[
+              'is_published',
+              {
+                valuePropName: 'checked',
+                initialValue: false,
+              },
+              ]"
+            >
+              Опубликовать
+            </a-checkbox>
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="Вопросы" force-render>
+            <a-button type="primary" class="mb-10" @click="addQuestion">
+              Добавить вопрос
+            </a-button>
 
-          <a-upload
-              v-model:file-list="fileList"
-              name="file"
-              multiple="false"
-              list-type="picture-card"
-              class="avatar-uploader"
-              :show-upload-list="true"
-              :headers="{'Authorization': `Bearer ${getAuthToken}`}"
-              action="api/v1/tests/media"
-          >
-            <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-            <div v-else>
-              <loading-outlined v-if="loading"></loading-outlined>
-              <plus-outlined v-else></plus-outlined>
-              <div class="ant-upload-text">Upload</div>
-            </div>
-          </a-upload>
-        </a-form-item>
-
-        <a-form-item class="mb-10" label="Факультет" name="faculties" :colon="false">
-          <!--          <v-select :options="data.academies" label="title"></v-select>-->
-          <a-select
-              :labelInValue="true"
-              v-model:value="form.faculties"
-              mode="multiple"
-              :options="data.academies"
-              :field-names="{ label: 'label', value: 'value', options: 'children' }">
-          </a-select>
-        </a-form-item>
-        <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
-          <a-textarea v-model:value="form.description" />
-        </a-form-item>
-
-        <a-form-item class="mb-10" label="Название" name="title" :colon="false">
-          <a-input
-              v-model:value="form.title"
-          />
-        </a-form-item>
-        <a-checkbox
-            v-model:value="form.is_published"
-            v-decorator="[
-						'is_published',
-						{
-							valuePropName: 'checked',
-							initialValue: false,
-						},
-						]"
-        >
-          Опубликовать
-        </a-checkbox>
+            <a-collapse v-model="activeKey" v-if="form.questions.length">
+              <a-collapse-panel :key="question.id" :header="'Вопрос ' + (index + 1)" v-for="(question,index) in form.questions">
+                <a-form-item class="mb-10" label="Вопрос" name="question" :colon="false">
+                  <a-textarea
+                      v-model:value="question.question_text"
+                  />
+                  <a-button ghost type="primary" class="mb-10" @click="addOption(question)">
+                    Добавить ответ
+                  </a-button>
+                  <a-row :gutter="16">
+                    <a-col class="gutter-row" :span="6" v-for="(option,index) in question.options">
+                      <a-input
+                          v-model:value="option.option_text"
+                      />
+                      <a-checkbox
+                          v-model:value="option.is_correct"
+                          v-decorator="[
+                            'is_correct',
+                            {
+                              valuePropName: 'is_correct',
+                              initialValue: false,
+                            },
+                            ]"
+                      >
+                        Верный ответ
+                      </a-checkbox>
+                      <a-button danger @click="removeOption(question,index)" class="mb-10" shape="circle">
+                        <template  #icon><DeleteOutlined /></template>
+                      </a-button>
+                    </a-col>
+                  </a-row>
+                </a-form-item>
+                <a-button danger class="mb-10" @click="removeQuestion(question)">
+                  Удалить вопрос
+                </a-button>
+              </a-collapse-panel>
+            </a-collapse>
+          </a-tab-pane>
+        </a-tabs>
         <a-form-item>
           <a-button type="primary" block html-type="submit" >
             Сохранить
@@ -75,10 +93,6 @@
         </a-form-item>
       </a-form>
     </a-skeleton>
-
-
-
-
   </a-drawer>
 </template>
 
@@ -88,7 +102,8 @@
 
 import { notification } from 'ant-design-vue';
 import AuthUtil from '@/libs/auth/auth';
-
+import ImageUpload from '@/components/Images/ImageUpload.vue';
+import { DeleteOutlined } from '@ant-design/icons-vue';
 
 export default ({
 
@@ -99,12 +114,13 @@ export default ({
       text: null,
       fileList: null,
       data: {},
+      activeKey: ['1'],
       imageUrl: null,
       initialForm: {
         title: '',
         description:'',
         is_published: false,
-        faculties: [],
+        questions: []
       },
       initialId: null,
       loading: false,
@@ -119,12 +135,13 @@ export default ({
       }
     }
   },
-
   props: [
     'id',
     'visible'
   ],
   components:{
+    ImageUpload,
+    DeleteOutlined
   },
   computed:{
     getAuthToken(){
@@ -148,8 +165,12 @@ export default ({
     visible(){
       this.visibleForm = this.visible;
     },
+    activeKey(key) {
+      console.log(key);
+    },
     id(){
       this.initialId = this.id;
+      this.resetForm();
       if(this.id!=null){
         this.loadData(this.id)
       }
@@ -163,37 +184,35 @@ export default ({
 
   mounted(){
     this.resetForm();
-    this.fetchCreate();
   },
 
   methods: {
+    addOption(question){
+      question.options.push({
+        option_text: '',
+        is_correct: false
+      })
+    },
+    removeOption(question,optionIndex){
+      question = question.options.splice(optionIndex, 1)
+    },
+    addQuestion(){
+      this.form.questions.push({
+        id: this.form.questions.length+1,
+        question_text: '',
+        options: [
+
+        ],
+      })
+      // this.activeKey = [this.form.questions.length + 1]
+    },
+    removeQuestion(id){
+      this.form.questions = this.form.questions.filter(item => item.id != id)
+    },
 
     resetForm(){
       this.form = this.initialForm;
     },
-
-    fetchCreate() {
-      this.$axios.get('/tests/create')
-          .then(response => {
-            let academies = response.data.meta.academies
-            let transformedAcademies = academies.map(academy => ({
-              label: `Академия ${academy.name}`,
-              value: academy.id.toString(),
-              children: academy.faculties.map(faculty => ({
-                label: `Факультет ${faculty.name}`,
-                value: faculty.id.toString(),
-              }))
-            }));
-
-            this.data = {
-              academies: transformedAcademies
-            }
-            // this.form = response.data.data;
-            // router.push({ name: 'Academy', params: {academy_id: } })
-          })
-    },
-
-
     loadData(id){
       this.loading = true;
       this.$axios.get('/tests/'+id)
