@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTestRequest;
 use App\Http\Requests\UpdateTestRequest;
+use App\Http\Resources\TestFullResource;
 use App\Http\Resources\TestResource;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Question;
 use App\Models\QuestionOption;
 use App\Models\Test;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -18,24 +21,28 @@ use mysql_xdevapi\Exception;
 
 class TestsApiController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request,Lesson $lesson)
     {
-
-        return new TestResource(Test::where('lesson_id', $request->input('lesson_id'))->with(['course', 'lesson'])->get());
+        return response([
+            'data' => TestResource::collection($lesson->tests),
+            'meta' => [
+                'title'  => $lesson->title,
+            ],
+        ]);
     }
 
-    public function store(StoreTestRequest $request)
+    public function store(StoreTestRequest $request,Lesson $lesson)
     {
-        $test = Test::create($request->validated());
+        $validatedData = $request->validated();
+        $validatedData['lesson_id'] = $lesson->id;
+
+        $test = Test::create($validatedData);
+        (new MediaController)->syncMedia($request->input('images', []), $test->id);
+
         if(!empty($request->questions)){
             foreach ($request->questions as $question){
                 $question['test_id'] = $test->id;
                 $this->createQuestion($question);
-//                $q = Question::create($question);
-//                foreach ($question['options'] as $option){
-//                    $option['question_id'] = $q->id;
-//                    QuestionOption::create($option);
-//                }
             }
         }
         return (new TestResource($test))
@@ -59,27 +66,18 @@ class TestsApiController extends Controller
         return QuestionOption::create($option);
     }
 
-    public function create()
-    {
 
-        return response([
-            'meta' => [
-                'course' => Course::get(['id', 'title']),
-                'lesson' => Lesson::get(['id', 'title']),
-            ],
-        ]);
+    public function show(Lesson $lesson,Test $test)
+    {
+        return new TestFullResource($test);
     }
 
-    public function show(Test $test)
-    {
-
-        return new TestResource($test->load(['course', 'lesson']));
-    }
-
-    public function update(UpdateTestRequest $request, Test $test)
+    public function update(UpdateTestRequest $request,Lesson $lesson, Test $test)
     {
         $test->update($request->validated());
         $questions = $test->questions()->pluck('id')->toArray();
+        (new MediaController)->syncMedia($request->input('images', []), $test->id);
+
         if(!empty($request->questions)){
             $questionsReq = $request->input('questions');
             $foundQuestions = [];
@@ -126,28 +124,23 @@ class TestsApiController extends Controller
             Question::destroy($allqids);
         }
 
-        return (new TestResource($test))
+        return (new TestFullResource($test))
             ->response()
             ->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
-    public function edit(Test $test)
-    {
 
-        return response([
-            'data' => new TestResource($test->load(['course', 'lesson','questions', 'questions.options'])),
-            'meta' => [
-                'course' => Course::get(['id', 'title']),
-                'lesson' => Lesson::get(['id', 'title']),
-            ],
-        ]);
-    }
-
-    public function destroy(Test $test)
+    public function destroy(Lesson $lesson,Test $test )
     {
 
         $test->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function storeMedia(Request $request)
+    {
+        $model = new Test();
+        return  (new MediaController)->storeMedia($request, $model, 'test_thumbnail');
     }
 }

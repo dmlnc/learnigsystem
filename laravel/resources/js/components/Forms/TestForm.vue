@@ -19,7 +19,7 @@
         <a-tabs default-active-key="1" @change="callback">
           <a-tab-pane key="1" tab="Основные">
             <a-form-item class="mb-10" label="Изображение" name="image" :colon="false">
-              <ImageUpload v-model="form.images" action='lessons/media' :images="form.media" :maxCount="1"></ImageUpload>
+              <ImageUpload v-model="form.images" action='tests/media' :images="form.media" :maxCount="1"></ImageUpload>
             </a-form-item>
             <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
               <a-textarea v-model:value="form.description" />
@@ -30,14 +30,7 @@
               />
             </a-form-item>
             <a-checkbox
-                v-model:value="form.is_published"
-                v-decorator="[
-              'is_published',
-              {
-                valuePropName: 'checked',
-                initialValue: false,
-              },
-              ]"
+                v-model:checked="form.is_published"
             >
               Опубликовать
             </a-checkbox>
@@ -47,29 +40,25 @@
               Добавить вопрос
             </a-button>
 
-            <a-collapse v-model="activeKey" v-if="form.questions.length">
+            <a-collapse v-model="activeKey" v-if="form.questions">
               <a-collapse-panel :key="question.id" :header="'Вопрос ' + (index + 1)" v-for="(question,index) in form.questions">
                 <a-form-item class="mb-10" label="Вопрос" name="question" :colon="false">
                   <a-textarea
                       v-model:value="question.question_text"
                   />
+                </a-form-item>
                   <a-button ghost type="primary" class="mb-10" @click="addOption(question)">
                     Добавить ответ
                   </a-button>
                   <a-row :gutter="16">
                     <a-col class="gutter-row" :span="6" v-for="(option,index) in question.options">
                       <a-input
+                          class="mb-10"
                           v-model:value="option.option_text"
                       />
                       <a-checkbox
-                          v-model:value="option.is_correct"
-                          v-decorator="[
-                            'is_correct',
-                            {
-                              valuePropName: 'is_correct',
-                              initialValue: false,
-                            },
-                            ]"
+                          v-model:checked="option.is_correct"
+
                       >
                         Верный ответ
                       </a-checkbox>
@@ -78,8 +67,8 @@
                       </a-button>
                     </a-col>
                   </a-row>
-                </a-form-item>
-                <a-button danger class="mb-10" @click="removeQuestion(question)">
+
+                <a-button danger class="mb-10" @click="removeQuestion(index)">
                   Удалить вопрос
                 </a-button>
               </a-collapse-panel>
@@ -104,7 +93,7 @@ import { notification } from 'ant-design-vue';
 import AuthUtil from '@/libs/auth/auth';
 import ImageUpload from '@/components/Images/ImageUpload.vue';
 import { DeleteOutlined } from '@ant-design/icons-vue';
-
+import draggable from 'vuedraggable';
 export default ({
 
 
@@ -119,7 +108,9 @@ export default ({
         title: '',
         description:'',
         is_published: false,
-        questions: []
+        questions: [],
+        images:[],
+        media:[]
       },
       initialId: null,
       loading: false,
@@ -140,7 +131,8 @@ export default ({
   ],
   components:{
     ImageUpload,
-    DeleteOutlined
+    DeleteOutlined,
+    draggable,
   },
   computed:{
     getAuthToken(){
@@ -197,24 +189,23 @@ export default ({
     },
     addQuestion(){
       this.form.questions.push({
-        id: this.form.questions.length+1,
         question_text: '',
         options: [
-
         ],
       })
       // this.activeKey = [this.form.questions.length + 1]
     },
-    removeQuestion(id){
-      this.form.questions = this.form.questions.filter(item => item.id != id)
+    removeQuestion(index){
+      console.log(index)
+       this.form.questions.splice(index,1)
     },
 
     resetForm(){
-      this.form = this.initialForm;
+      this.form = {...this.initialForm, lesson_id: this.$route.params.lesson_id, course_id:this.$route.params.course_id};
     },
     loadData(id){
       this.loading = true;
-      this.$axios.get('/tests/'+id)
+      this.$axios.get('/lessons/'+ this.$route.params.lesson_id+ '/tests/'+id)
           .then(response => {
             this.form = response.data.data;
             // router.push({ name: 'Academy', params: {academy_id: } })
@@ -253,7 +244,7 @@ export default ({
 
     submitForm(){
       let data = {...this.form};
-      let url = "tests";
+      let url = '/lessons/'+ this.$route.params.lesson_id+ "/tests";
       if(this.initialId!=null){
         data._method = "put";
         url = url + '/' + this.initialId;
@@ -267,6 +258,7 @@ export default ({
             this.initialId = response.data.data.id;
             this.loadData(this.initialId);
             this.$emit('save');
+            this.$emit('close');
             notification.success({
               message: 'Успешно',
             });

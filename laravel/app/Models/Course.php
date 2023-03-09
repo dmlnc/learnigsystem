@@ -19,8 +19,6 @@ class Course extends Model implements HasMedia
 
     public $table = 'courses';
 
-    protected $appends = [
-    ];
 
     protected $casts = [
         'is_published' => 'boolean',

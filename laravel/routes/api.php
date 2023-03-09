@@ -41,8 +41,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']
 
     Route::delete('/media/{media_id}', [MediaController::class, 'deleteMedia']);
 
-    Route::apiResource('tests', TestsApiController::class);
-    Route::post('/test/media', [TestsApiController::class, 'storeMedia']);
+    Route::apiResource('lessons/{lesson}/tests', TestsApiController::class);
+
+//    Route::apiResource('tests', TestsApiController::class);
+    Route::post('/tests/media', [TestsApiController::class, 'storeMedia']);
 
     Route::post('/logout', 'AuthController@logout');
 });
