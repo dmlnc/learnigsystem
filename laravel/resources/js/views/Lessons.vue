@@ -19,7 +19,8 @@
                 <a-skeleton active :loading="loading">
                     <a-card>
                         <template #cover>
-                            <img alt="example" :src="'https://doodleipsum.com/900x525/flat?n='+lesson.id" />
+                            <img v-if="lesson.thumbnail == null" :src="'https://doodleipsum.com/900x525/flat?n='+lesson.id" />
+                            <img v-else :src="lesson.thumbnail.url" />
                         </template>
                         <template class="ant-card-actions" #actions>
                             <span @click="showForm(lesson.id)"><svg viewBox="64 64 896 896" data-icon="edit" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">
@@ -34,7 +35,7 @@
                                 </span>
                             </a-popconfirm>
                         </template>
-                        <a-card-meta :title="'Урок '+ lesson.title" :description="lesson.description">
+                        <a-card-meta :title="'Урок '+ lesson.title" :description="lesson.short_text">
                         </a-card-meta>
                     </a-card>
                 </a-skeleton>
