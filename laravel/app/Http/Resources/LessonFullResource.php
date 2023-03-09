@@ -4,13 +4,13 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LessonResource extends JsonResource
+class LessonFullResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
             'id' => $this->id,
-            'media' => ThumbnailResource::collection($this->getMedia('course_thumbnail')),
+            'media' => ThumbnailResource::collection($this->getMedia('lesson_thumbnail')),
             'title' => $this->title,
             'video' => $this->video,
             'short_text' => $this->short_text,

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLessonRequest;
 use App\Http\Requests\UpdateLessonRequest;
 use App\Http\Resources\LessonResource;
+use App\Http\Resources\LessonFullResource;
 use App\Models\Course;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class LessonsApiController extends Controller
 
         (new MediaController)->syncMedia($request->input('images', []), $lesson->id);
 
-        return (new LessonResource($lesson))
+        return (new LessonFullResource($lesson))
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
     }
@@ -55,7 +56,7 @@ class LessonsApiController extends Controller
     public function show(Course $course, Lesson $lesson)
     {
 
-        return new LessonResource($lesson);
+        return new LessonFullResource($lesson);
     }
 
 
@@ -65,7 +66,7 @@ class LessonsApiController extends Controller
 
         (new MediaController)->syncMedia($request->input('images', []), $lesson->id);
 
-        return (new LessonResource($lesson))
+        return (new LessonFullResource($lesson))
             ->response()
             ->setStatusCode(Response::HTTP_ACCEPTED);
     }

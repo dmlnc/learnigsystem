@@ -185,7 +185,7 @@ export default ({
     },
     loadData(id){
       this.loading = true;
-      this.$axios.get('/lessons/'+id)
+      this.$axios.get(`courses/${this.$route.params.course_id}/lessons/${id}`)
           .then(response => {
             this.form = response.data.data;
           })
@@ -220,7 +220,7 @@ export default ({
 
     submitForm(){
       let data = {...this.form};
-      let url = "lessons";
+      let url = `courses/${this.$route.params.course_id}/lessons`;
       if(this.initialId!=null){
         data._method = "put";
         url = url + '/' + this.initialId;
