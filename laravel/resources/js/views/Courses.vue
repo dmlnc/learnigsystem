@@ -17,7 +17,9 @@
             	<a-skeleton active :loading="loading" >
                 <a-card>
                     <template #cover>
-                        <img alt="example" :src="'https://doodleipsum.com/900x525/flat?n='+course.id" />
+                        <img v-if="course.thumbnail == null" :src="'https://doodleipsum.com/900x525/flat?n='+course.id" />
+                        <img v-else :src="course.thumbnail.url" />
+                        <!-- <img alt="example" :src="'https://doodleipsum.com/900x525/flat?n='+course.id" /> -->
                     </template>
 
                     <template class="ant-card-actions" #actions>
