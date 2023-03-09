@@ -37,18 +37,6 @@
           <a-input v-model:value="form.video" />
         </a-form-item>
         <a-checkbox
-            v-model:value="form.is_free"
-            v-decorator="[
-						'is_free',
-						{
-							valuePropName: 'checked',
-							initialValue: true,
-						},
-						]"
-        >
-          Опубликовать
-        </a-checkbox>
-        <a-checkbox
             v-model:value="form.is_published"
             v-decorator="[
 						'is_published',
@@ -103,7 +91,6 @@ export default ({
         description:'',
         position:'',
         is_published:false,
-        is_free:true,
         media:[],
         images:[],
       },
