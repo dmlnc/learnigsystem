@@ -41,7 +41,6 @@ export default ({
 
     data() {
         return {
-            // Binded model property for "Sign In Form" switch button for "Remember Me" .
             text: null,
             data: {},
             imageUrl: null,

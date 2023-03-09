@@ -10,7 +10,7 @@ class LessonResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'thumbnail' => new ThumbnailResource($this->getFirstMedia('course_thumbnail')),
+            'thumbnail' => new ThumbnailResource($this->getFirstMedia('lesson_thumbnail')),
             'title' => $this->title,
             'short_text' => $this->short_text,
             'is_published' => $this->is_published,

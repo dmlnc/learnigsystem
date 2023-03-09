@@ -48,7 +48,6 @@ import { notification } from 'ant-design-vue';
 
     data() {
       return {
-        // Binded model property for "Sign In Form" switch button for "Remember Me" .
         text: null,
         initialForm: {
           name: '',

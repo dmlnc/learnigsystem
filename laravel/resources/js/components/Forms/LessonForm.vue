@@ -36,9 +36,7 @@
           />
         </a-form-item>
 
-        <a-form-item class="mb-10" label="Видео" name="video" :colon="false">
-          <a-input v-model:value="form.video" />
-        </a-form-item>
+        
         <a-form-item class="mb-10" label="" name="is_published" :colon="false">
 
         <a-checkbox
@@ -76,7 +74,6 @@ export default ({
 
   data() {
     return {
-      // Binded model property for "Sign In Form" switch button for "Remember Me" .
       text: null,
       fileList: null,
       data: {},
@@ -84,7 +81,6 @@ export default ({
       initialForm: {
         title: '',
         thumbnail:'',
-        video:'',
         short_text:'',
         long_text:'',
         description:'',
