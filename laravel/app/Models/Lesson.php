@@ -19,10 +19,6 @@ class Lesson extends Model implements HasMedia
 
     public $table = 'lessons';
 
-    protected $appends = [
-        'thumbnail',
-        // 'video',
-    ];
 
     protected $dates = [
         'created_at',
@@ -32,7 +28,6 @@ class Lesson extends Model implements HasMedia
 
     protected $casts = [
         'is_published' => 'boolean',
-        'is_free'      => 'boolean',
     ];
 
     protected $filterable = [
@@ -52,7 +47,6 @@ class Lesson extends Model implements HasMedia
         'long_text',
         'position',
         'is_published',
-        'is_free',
     ];
 
     protected $fillable = [
@@ -61,9 +55,7 @@ class Lesson extends Model implements HasMedia
         'short_text',
         'long_text',
         'position',
-        'video',
         'is_published',
-        'is_free',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -71,11 +63,15 @@ class Lesson extends Model implements HasMedia
 
     public function registerMediaConversions(Media $media = null): void
     {
-        $thumbnailWidth  = 50;
-        $thumbnailHeight = 50;
+        $thumbnailWidth  = 300;
+        $thumbnailHeight = 300;
 
-        $thumbnailPreviewWidth  = 120;
-        $thumbnailPreviewHeight = 120;
+        $thumbnailPreviewWidth  = 500;
+        $thumbnailPreviewHeight = 500;
+
+        $previewWidth = 900;
+        $previewHeight = 900;
+
 
         $this->addMediaConversion('thumbnail')
             ->width($thumbnailWidth)
@@ -85,6 +81,11 @@ class Lesson extends Model implements HasMedia
             ->width($thumbnailPreviewWidth)
             ->height($thumbnailPreviewHeight)
             ->fit('crop', $thumbnailPreviewWidth, $thumbnailPreviewHeight);
+
+        $this->addMediaConversion('preview')
+            ->width($previewWidth)
+            ->height($previewHeight)
+            ->fit('contain', $previewWidth, $previewHeight);
     }
 
     public function course()
@@ -100,28 +101,6 @@ class Lesson extends Model implements HasMedia
     {
         return $this->hasManyThrough(TestResult::class,Test::class);
     }
-
-    public function getThumbnailAttribute()
-    {
-        return $this->getMedia('lesson_thumbnail')->map(function ($item) {
-            $media = $item->toArray();
-            $media['url'] = $item->getUrl();
-            $media['thumbnail'] = $item->getUrl('thumbnail');
-            $media['preview_thumbnail'] = $item->getUrl('preview_thumbnail');
-
-            return $media;
-        });
-    }
-
-    // public function getVideoAttribute()
-    // {
-    //     return $this->getMedia('lesson_video')->map(function ($item) {
-    //         $media = $item->toArray();
-    //         $media['url'] = $item->getUrl();
-
-    //         return $media;
-    //     });
-    // }
 
     protected function serializeDate(DateTimeInterface $date)
     {

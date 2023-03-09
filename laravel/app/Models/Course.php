@@ -93,35 +93,6 @@ class Course extends Model implements HasMedia
     //     return $this->belongsTo(User::class);
     // }
 
-    public function images()
-    {
-        return $this->getMedia('course_thumbnail')->map(function ($item) {
-            $media = $item->toArray();
-            $media['url'] = $item->getUrl();
-            $media['thumbnail'] = $item->getUrl('thumbnail');
-            $media['preview_thumbnail'] = $item->getUrl('preview_thumbnail');
-            $media['preview'] = $item->getUrl('preview');
-
-            return $media;
-        });
-    }
-
-
-    public function thumbnail()
-    {
-        return $this->getMedia('course_thumbnail')->map(function ($item) {
-            $media = $item->toArray();
-            $media['url'] = $item->getUrl();
-            $media['thumbnail'] = $item->getUrl('thumbnail');
-            $media['preview_thumbnail'] = $item->getUrl('preview_thumbnail');
-            $media['preview'] = $item->getUrl('preview');
-
-            return $media;
-        });
-    }
-
-    
-
    
     public function faculties()
     {

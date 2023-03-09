@@ -18,7 +18,7 @@ class FacultyApiController extends Controller
     public function index(Request $request, Academy $academy)
     {
         return response([
-            'data' => new FacultyResource($academy->faculties),
+            'data' => FacultyResource::collection($academy->faculties),
             'meta' => [
                 'name'  => $academy->name,
             ],

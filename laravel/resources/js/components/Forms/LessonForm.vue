@@ -188,7 +188,6 @@ export default ({
       this.$axios.get('/lessons/'+id)
           .then(response => {
             this.form = response.data.data;
-            // router.push({ name: 'Academy', params: {academy_id: } })
           })
           .catch(error => {
             notification.error({

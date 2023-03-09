@@ -11,17 +11,11 @@ class StoreLessonRequest extends FormRequest
     public function authorize()
     {
         return true;
-
     }
 
     public function rules()
     {
         return [
-            'course_id' => [
-                'integer',
-                'exists:courses,id',
-                'required',
-            ],
             'title' => [
                 'string',
                 'required',
@@ -43,12 +37,12 @@ class StoreLessonRequest extends FormRequest
             'is_published' => [
                 'boolean',
             ],
-            'is_free' => [
-                'boolean',
-            ],
-            'video'=>[
+            'video' => [
                 'string',
                 'nullable',
+            ],
+            'images' => [
+                'array'
             ],
         ];
     }

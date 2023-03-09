@@ -36,7 +36,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']
     Route::resource('courses', CoursesApiController::class);
     Route::post('/courses/media', [CoursesApiController::class, 'storeMedia']);
 
-    Route::apiResource('lessons', LessonsApiController::class);
+    Route::apiResource('courses/{course}/lessons', LessonsApiController::class);
     Route::post('/lessons/media', [LessonsApiController::class, 'storeMedia']);
 
     Route::delete('/media/{media_id}', [MediaController::class, 'deleteMedia']);

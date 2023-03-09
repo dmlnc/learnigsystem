@@ -16,22 +16,9 @@ class UpdateLessonRequest extends FormRequest
     public function rules()
     {
         return [
-            'course_id' => [
-                'integer',
-                'exists:courses,id',
-                'required',
-            ],
             'title' => [
                 'string',
                 'required',
-            ],
-            'thumbnail' => [
-                'array',
-                'nullable',
-            ],
-            'thumbnail.*.id' => [
-                'integer',
-                'exists:media,id',
             ],
             'short_text' => [
                 'string',
@@ -40,14 +27,6 @@ class UpdateLessonRequest extends FormRequest
             'long_text' => [
                 'string',
                 'nullable',
-            ],
-            'video' => [
-                'string',
-                'nullable',
-            ],
-            'video.*.id' => [
-                'integer',
-                'exists:media,id',
             ],
             'position' => [
                 'integer',
@@ -58,8 +37,12 @@ class UpdateLessonRequest extends FormRequest
             'is_published' => [
                 'boolean',
             ],
-            'is_free' => [
-                'boolean',
+            'video' => [
+                'string',
+                'nullable',
+            ],
+            'images' => [
+                'array'
             ],
         ];
     }

@@ -14,73 +14,74 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class LessonsApiController extends Controller
 {
-    public function index(Request $request)
-    {
 
-        return new LessonResource(Lesson::where('course_id', $request->input('course_id'))->with(['course'])->get());
+    public function index(Request $request, Course $course)
+    {
+        return response([
+            'data' => LessonResource::collection($course->lessons),
+            'meta' => [
+                'title'  => $course->title,
+            ],
+        ]);
+
     }
 
-    public function store(StoreLessonRequest $request)
+    public function store(StoreLessonRequest $request, Course $course)
     {
-        $lesson = Lesson::create($request->validated());
 
-        if ($media = $request->input('thumbnail', [])) {
-            Media::whereIn('id', data_get($media, '*.id'))
-                ->where('model_id', 0)
-                ->update(['model_id' => $lesson->id]);
-        }
+        $validatedData = $request->validated();
 
-        // if ($media = $request->input('video', [])) {
-        //     Media::whereIn('id', data_get($media, '*.id'))
-        //         ->where('model_id', 0)
-        //         ->update(['model_id' => $lesson->id]);
-        // }
+        $validatedData['course_id'] = $course->id;
+
+        $lesson = Lesson::create($validatedData);
+
+        (new MediaController)->syncMedia($request->input('images', []), $lesson->id);
 
         return (new LessonResource($lesson))
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
     }
 
-    public function create()
+    // public function create()
+    // {
+
+    //     return response([
+    //         'meta' => [
+    //             'course' => Course::get(['id', 'title']),
+    //         ],
+    //     ]);
+    // }
+
+    public function show(Course $course, Lesson $lesson)
     {
 
-        return response([
-            'meta' => [
-                'course' => Course::get(['id', 'title']),
-            ],
-        ]);
+        return new LessonResource($lesson);
     }
 
-    public function show(Lesson $lesson)
-    {
 
-        return new LessonResource($lesson->load(['course']));
-    }
-
-    public function update(UpdateLessonRequest $request, Lesson $lesson)
+    public function update(UpdateLessonRequest $request, Course $course, Lesson $lesson)
     {
         $lesson->update($request->validated());
 
-        $lesson->updateMedia($request->input('thumbnail', []), 'lesson_thumbnail');
-        // $lesson->updateMedia($request->input('video', []), 'lesson_video');
+        (new MediaController)->syncMedia($request->input('images', []), $lesson->id);
 
         return (new LessonResource($lesson))
             ->response()
             ->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
-    public function edit(Lesson $lesson)
-    {
+    // public function edit(Lesson $lesson)
+    // {
 
-        return response([
-            'data' => new LessonResource($lesson->load(['course'])),
-            'meta' => [
-                'course' => Course::get(['id', 'title']),
-            ],
-        ]);
-    }
+    //     return response([
+    //         'data' => new LessonResource($lesson->load(['course'])),
+    //         'meta' => [
+    //             'course' => Course::get(['id', 'title']),
+    //         ],
+    //     ]);
+    // }
 
-    public function destroy(Lesson $lesson)
+    public function destroy(Course $course, Lesson $lesson)
     {
 
         $lesson->delete();
@@ -91,6 +92,6 @@ class LessonsApiController extends Controller
     public function storeMedia(Request $request)
     {
         $model = new Lesson();
-        return  (new MediaController)->storeMedia($request, $model, 'collection_name');
+        return  (new MediaController)->storeMedia($request, $model, 'lesson_thumbnail');
     }
 }
