@@ -90,18 +90,7 @@ class LessonsApiController extends Controller
 
     public function storeMedia(Request $request)
     {
-
-        if ($request->has('size')) {
-            $this->validate($request, [
-                'file' => 'max:' . $request->input('size') * 1024,
-            ]);
-        }
-
-        $model         = new Lesson();
-        $model->id     = $request->input('model_id', 0);
-        $model->exists = true;
-        $media         = $model->addMediaFromRequest('file')->toMediaCollection($request->input('collection_name'));
-
-        return response()->json($media, Response::HTTP_CREATED);
+        $model = new Lesson();
+        return  (new MediaController)->storeMedia($request, $model, 'collection_name');
     }
 }

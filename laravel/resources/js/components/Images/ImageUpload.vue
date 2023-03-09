@@ -1,7 +1,7 @@
 <template>
     <div>
         <div>
-            <a-upload-dragger @change="handleFileStatus" :disabled="maxCount <= allImages.length" :headers="getHeaders" :show-upload-list="false" name="file" :maxCount="maxCount - allImages.length" :multiple="maxCount - allImages.length > 1" :action="`api/v1/${action}`">
+            <a-upload-dragger @change="handleFileStatus" :disabled="maxCount <= allImages.length" :headers="getHeaders" :show-upload-list="false" name="file" :maxCount="maxCount - allImages.length" :multiple="maxCount - allImages.length > 1" :action="`/api/v1/${action}`">
                 <p class="ant-upload-drag-icon">
                     <inbox-outlined></inbox-outlined>
                 </p>

@@ -24,30 +24,29 @@
               v-model:value="form.title"
           />
         </a-form-item>
-        <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
+        <a-form-item class="mb-10" label="Описание" name="short_text" :colon="false">
           <a-textarea v-model:value="form.short_text" />
         </a-form-item>
+        <a-form-item class="mb-20" label="Текст урока" name="long_text" :colon="false">
 
-        <QuillEditor theme="snow"
+          <QuillEditor theme="snow"
                      v-model:content="form.long_text"
                      @ready="onEditorReady($event)"
                      contentType="html"
-        />
+          />
+        </a-form-item>
+
         <a-form-item class="mb-10" label="Видео" name="video" :colon="false">
           <a-input v-model:value="form.video" />
         </a-form-item>
+        <a-form-item class="mb-10" label="" name="is_published" :colon="false">
+
         <a-checkbox
-            v-model:value="form.is_published"
-            v-decorator="[
-						'is_published',
-						{
-							valuePropName: 'checked',
-							initialValue: false,
-						},
-						]"
+            v-model:checked="form.is_published"
         >
-          Опубликовать
+          Урок опубликован (доступен ученикам)
         </a-checkbox>
+        </a-form-item>
         <a-form-item>
           <a-button type="primary" block html-type="submit" >
             Сохранить
@@ -90,7 +89,7 @@ export default ({
         long_text:'',
         description:'',
         position:'',
-        is_published:false,
+        is_published: true,
         media:[],
         images:[],
       },
@@ -125,6 +124,7 @@ export default ({
         short_text: [
           { required: true, message: 'Введите описание', trigger: 'blur' },
         ],
+
       }
     }
   },
