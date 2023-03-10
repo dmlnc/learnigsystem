@@ -1,15 +1,9 @@
-<!-- 
-    This is the dashboard page, it uses the dashboard layout in: 
-    "./layouts/Dashboard.vue" .
- -->
 <template>
     <div>
-        <UserForm :visible="formVisible" :id="formId" @close="hideForm" @save="loadData"/>
+        <UserForm :visible="formVisible" :id="formId" @close="hideForm" @save="loadData" />
         <a-typography-title :level="5" class="mb-40">Пользователи</a-typography-title>
-
         <div class="mb-40">
-             <a-button type="primary" @click="showForm(null)">Создать</a-button>
-           
+            <a-button type="primary" @click="showForm(null)">Создать</a-button>
         </div>
         <a-table :dataSource="users" :columns="columns" :row-key="record => record.id">
             <template #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }">
@@ -45,7 +39,7 @@
                 <template v-else-if="column.key === 'faculties'">
                     <span>
                         <a-tag v-for="faculty in record.faculties" :key="faculty.id">
-                           Факультет {{ faculty.name }}
+                            Факультет {{ faculty.name }}
                         </a-tag>
                     </span>
                 </template>
