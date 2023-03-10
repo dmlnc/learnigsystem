@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateQuestionRequest;
 use App\Http\Resources\Admin\QuestionResource;
 use App\Models\Question;
 use App\Models\Test;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -16,7 +17,6 @@ class QuestionsApiController extends Controller
 {
     public function index()
     {
-
         return new QuestionResource(Question::with(['course'])->get());
     }
 
@@ -29,6 +29,7 @@ class QuestionsApiController extends Controller
                 ->where('model_id', 0)
                 ->update(['model_id' => $question->id]);
         }
+        (new MediaController)->syncMedia($request->input('images', []), $question->id);
 
         return (new QuestionResource($question))
             ->response()
@@ -55,7 +56,9 @@ class QuestionsApiController extends Controller
     {
         $question->update($request->validated());
 
-        $question->updateMedia($request->input('question_image', []), 'question_question_image');
+        (new MediaController)->syncMedia($request->input('images', []), $question->id);
+
+//        $question->updateMedia($request->input('question_image', []), 'question_question_image');
 
         return (new QuestionResource($question))
             ->response()
@@ -83,17 +86,8 @@ class QuestionsApiController extends Controller
 
     public function storeMedia(Request $request)
     {
-
-        if ($request->has('size')) {
-            $this->validate($request, [
-                'file' => 'max:' . $request->input('size') * 1024,
-            ]);
-        }
-
-        $model         = new Question();
-        $model->id     = $request->input('model_id', 0);
-        $model->exists = true;
-        $media         = $model->addMediaFromRequest('file')->toMediaCollection($request->input('collection_name'));
+        $model = new Question();
+        return  (new MediaController)->storeMedia($request, $model, 'question_thumbnail');
 
         return response()->json($media, Response::HTTP_CREATED);
     }

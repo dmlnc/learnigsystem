@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\FacultyApiController;
 use App\Http\Controllers\Api\UsersApiController;
 use App\Http\Controllers\Api\LessonsApiController;
 use App\Http\Controllers\Api\TestsApiController;
-
+use App\Http\Controllers\Api\QuestionsApiController;
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyApiController;
@@ -50,6 +50,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']
 
 //    Route::apiResource('tests', TestsApiController::class);
     Route::post('/tests/media', [TestsApiController::class, 'storeMedia']);
+    Route::post('/questions/media', [QuestionsApiController::class, 'storeMedia']);
 
     Route::post('/logout', 'AuthController@logout');
 });

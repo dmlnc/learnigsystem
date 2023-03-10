@@ -18,16 +18,16 @@
       >
         <a-tabs default-active-key="1" @change="callback">
           <a-tab-pane key="1" tab="Основные">
-            <a-form-item class="mb-10" label="Изображение" name="image" :colon="false">
-              <ImageUpload v-model="form.images" action='tests/media' :images="form.media" :maxCount="1"></ImageUpload>
-            </a-form-item>
-            <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
-              <a-textarea v-model:value="form.description" />
-            </a-form-item>
             <a-form-item class="mb-10" label="Название" name="title" :colon="false">
               <a-input
                   v-model:value="form.title"
               />
+            </a-form-item>
+            <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
+              <a-textarea v-model:value="form.description" />
+            </a-form-item>
+            <a-form-item class="mb-10" label="Изображение" name="image" :colon="false">
+              <ImageUpload v-model="form.images" action='tests/media' :images="form.media" :maxCount="1"></ImageUpload>
             </a-form-item>
             <a-checkbox
                 v-model:checked="form.is_published"
@@ -36,43 +36,65 @@
             </a-checkbox>
           </a-tab-pane>
           <a-tab-pane key="2" tab="Вопросы" force-render>
-            <a-button type="primary" class="mb-10" @click="addQuestion">
-              Добавить вопрос
-            </a-button>
+                <draggable
+                    item-key="randomString"
+                    :list="form.questions"
+                    class="list-group"
+                    handle=".handle"
+                    @change="updatePositions"
+                >
 
-            <a-collapse v-model="activeKey" v-if="form.questions">
-              <a-collapse-panel :key="question.id" :header="'Вопрос ' + (index + 1)" v-for="(question,index) in form.questions">
-                <a-form-item class="mb-10" label="Вопрос" name="question" :colon="false">
-                  <a-textarea
-                      v-model:value="question.question_text"
-                  />
-                </a-form-item>
-                  <a-button ghost type="primary" class="mb-10" @click="addOption(question)">
-                    Добавить ответ
-                  </a-button>
-                  <a-row :gutter="16">
-                    <a-col class="gutter-row" :span="6" v-for="(option,index) in question.options">
-                      <a-input
-                          class="mb-10"
-                          v-model:value="option.option_text"
-                      />
-                      <a-checkbox
-                          v-model:checked="option.is_correct"
-
-                      >
-                        Верный ответ
-                      </a-checkbox>
-                      <a-button danger @click="removeOption(question,index)" class="mb-10" shape="circle">
+                <template #item="{element,index}" >
+                  <a-collapse v-model:activeKey="activeKey">
+                  <a-collapse-panel :key="element.id" >
+                    <template #extra>
+                      <a-button danger shape="circle" @click="removeQuestion(index)" type="link">
                         <template  #icon><DeleteOutlined /></template>
                       </a-button>
-                    </a-col>
-                  </a-row>
+                    </template>
+                    <template #header>
+                      <div class="handle mr-10"><holder-outlined/> </div>
+                      {{ element.question_text ? 'Вопрос  ' + (index + 1) +' : ' + element.question_text : 'Вопрос номер ' + (index + 1) }}
+                    </template>
+                    <a-form-item class="mb-10" label="Вопрос" name="question" :colon="false">
+                      <a-textarea
+                          v-model:value="element.question_text"
+                      />
+                    </a-form-item>
+                    <a-form-item class="mb-10" label="Варианты ответов" name="options" :colon="false">
+                    <a-row :gutter="16">
+                        <a-col class="gutter-row" :span="6" v-for="(option,index) in element.options">
+                          <a-input
+                              class="mb-10"
+                              v-model:value="option.option_text"
+                          />
+                          <a-checkbox
+                              v-model:checked="option.is_correct"
 
-                <a-button danger class="mb-10" @click="removeQuestion(index)">
-                  Удалить вопрос
-                </a-button>
+                          >
+                            Верный ответ
+                          </a-checkbox>
+                          <a-button type="link" danger @click="removeOption(element,index)" class="mb-10">
+                            <template  #icon><DeleteOutlined /></template>
+                          </a-button>
+                        </a-col>
+                      </a-row>
+                    </a-form-item>
+                    <a-button ghost type="primary" class="mb-10" @click="addOption(element)">
+                      Добавить ответ
+                    </a-button>
+                    <a-form-item class="mb-10" label="Изображение" name="q_image" :colon="false">
+                      <ImageUpload v-model="element.images" action='questions/media' :images="element.media" :maxCount="1"></ImageUpload>
+                    </a-form-item>
+
               </a-collapse-panel>
-            </a-collapse>
+                  </a-collapse>
+                  </template>
+
+              </draggable>
+                <a-button type="primary" ghost class="mt-20 mb-10" @click="addQuestion">
+                  Добавить вопрос
+                </a-button>
           </a-tab-pane>
         </a-tabs>
         <a-form-item>
@@ -92,8 +114,9 @@
 import { notification } from 'ant-design-vue';
 import AuthUtil from '@/libs/auth/auth';
 import ImageUpload from '@/components/Images/ImageUpload.vue';
-import { DeleteOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined,HolderOutlined } from '@ant-design/icons-vue';
 import draggable from 'vuedraggable';
+
 export default ({
 
 
@@ -102,7 +125,7 @@ export default ({
       text: null,
       fileList: null,
       data: {},
-      activeKey: ['1'],
+      activeKey: [],
       imageUrl: null,
       initialForm: {
         title: '',
@@ -133,6 +156,7 @@ export default ({
     ImageUpload,
     DeleteOutlined,
     draggable,
+    HolderOutlined,
   },
   computed:{
     getAuthToken(){
@@ -156,9 +180,6 @@ export default ({
     visible(){
       this.visibleForm = this.visible;
     },
-    activeKey(key) {
-      console.log(key);
-    },
     id(){
       this.initialId = this.id;
       this.resetForm();
@@ -178,6 +199,21 @@ export default ({
   },
 
   methods: {
+    updatePositions() {
+      console.log('change')
+      // Loop through the questions and update their position based on their index in the array
+      this.form.questions.forEach((question, index) => {
+        question.position = index + 1
+      })
+    },
+    getComponentData(){
+      return {
+        onChange: this.handleChange,
+        onInput: this.inputChanged,
+        wrap: true,
+        value: this.activeNames
+      };
+    },
     addOption(question){
       question.options.push({
         option_text: '',
@@ -189,7 +225,12 @@ export default ({
     },
     addQuestion(){
       this.form.questions.push({
+        id: 'new_'+Math.random().toString(36).substr(2,9),
+        position: this.form.questions.length + 1,
+        points: 1,
         question_text: '',
+        images:[],
+        media:[],
         options: [
         ],
       })
@@ -258,7 +299,6 @@ export default ({
             this.initialId = response.data.data.id;
             this.loadData(this.initialId);
             this.$emit('save');
-            this.$emit('close');
             notification.success({
               message: 'Успешно',
             });

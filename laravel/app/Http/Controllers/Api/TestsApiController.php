@@ -65,9 +65,9 @@ class TestsApiController extends Controller
 
         foreach ($question['options'] as $option){
             $option['question_id'] = $q->id;
-            $q['optionsId'][] = $this->createOption($option)['id'];
+            $optionsIds = $this->createOption($option)['id'];
         }
-        return $q;
+        return ['question' => $q, 'optionsIds' => $optionsIds];
     }
 
     public function createOption($option){
@@ -139,9 +139,10 @@ class TestsApiController extends Controller
                 }
                 else{
                     $question['test_id'] = $test->id;
-                    $dbQuestion = $this->createQuestion($question);
+                    $response = $this->createQuestion($question);
+                    $dbQuestion = $response['question'];
                     // $questionsIds[] = $dbQuestion->id;
-                    $questionOptions = $dbQuestion['optionsIds'];
+                    $questionOptions = $response['optionsIds'];
                 }
 
                 $foundQuestionsIds[] = $dbQuestion->id;
