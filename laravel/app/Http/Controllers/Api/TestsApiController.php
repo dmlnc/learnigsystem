@@ -21,7 +21,7 @@ use mysql_xdevapi\Exception;
 
 class TestsApiController extends Controller
 {
-    public function index(Request $request,Lesson $lesson)
+    public function index(Request $request, Lesson $lesson)
     {
         return response([
             'data' => TestResource::collection($lesson->tests),
@@ -31,7 +31,7 @@ class TestsApiController extends Controller
         ]);
     }
 
-    public function store(StoreTestRequest $request,Lesson $lesson)
+    public function store(StoreTestRequest $request, Lesson $lesson)
     {
         $validatedData = $request->validated();
         $validatedData['lesson_id'] = $lesson->id;
@@ -55,9 +55,17 @@ class TestsApiController extends Controller
         if(!isset($question['options'])){
             return $q;
         }
+        $questionImages = [];
+
+        if(isset($question['images']) && $question['images']!=null){
+            $questionImages = $question['images'];
+        }
+
+        (new MediaController)->syncMedia($questionImages, $q->id);
+
         foreach ($question['options'] as $option){
             $option['question_id'] = $q->id;
-            $this->createOption($option);
+            $q['optionsId'][] = $this->createOption($option)['id'];
         }
         return $q;
     }
@@ -77,17 +85,20 @@ class TestsApiController extends Controller
         $test->update($request->validated());
 
         $questionsIds = $test->questions()->pluck('id')->toArray();
-        $optionsIds = $test->questions->options()->pluck('id')->toArray();
+        // $optionsIds = $test->questions->options()->pluck('id')->toArray();
 
 
         (new MediaController)->syncMedia($request->input('images', []), $test->id);
 
         if(!empty($request->questions)){
             $questionsReq = $request->input('questions', []);
+
             $foundQuestionsIds = [];
             $foundOptionsIds = [];
 
             foreach ($questionsReq as $question){
+
+                $questionOptions = [];
 
                 if(!isset($question['id'])){
                     $question['id'] = 'NEW';
@@ -96,44 +107,50 @@ class TestsApiController extends Controller
                 if(in_array($question['id'],$questionsIds)){
                     $dbQuestion = Question::find($question['id']);
                     $dbQuestion->update($question);
+
+                    if(isset($question['images']) && $question['images']!=null){
+                        $questionImages = $question['images'];
+                    }
+
+                    (new MediaController)->syncMedia($questionImages, $dbQuestion->id);
+
+                    $questionOptionsTemp = $dbQuestion->options()->pluck('id')->toArray();
+
+                    if(isset($question['options'])) {
+                        foreach ($question['options'] as $option) {
+
+                            if(!isset($option['id'])){
+                                $option['id'] = 'NEW';
+                            }
+
+                            $option['question_id'] = $dbQuestion->id;
+
+                            if(in_array($option['id'], $questionOptionsTemp)){
+                                $dbOption = QuestionOption::find($option['id']);
+                                $dbOption->update($option);
+                            }
+                            else{
+                                $dbOption = $this->createOption($option);
+                            }
+
+                            $foundOptionsIds[] = $dbOption->id;
+                        }
+                    }
                 }
                 else{
                     $question['test_id'] = $test->id;
                     $dbQuestion = $this->createQuestion($question);
+                    // $questionsIds[] = $dbQuestion->id;
+                    $questionOptions = $dbQuestion['optionsIds'];
                 }
-
-                $questionImages = [];
-                if(isset($question['images']) && $question['images']!=null){
-                    $questionImages = $question['images'];
-                }
-                
-                (new MediaController)->syncMedia($questionImages, $dbQuestion->id);
-
 
                 $foundQuestionsIds[] = $dbQuestion->id;
 
-                if(isset($question['options'])) {
-                    foreach ($question['options'] as $option) {
-
-                        if(!isset($option['id'])){
-                            $option['id'] = 'NEW';
-                        }
-
-                        if(in_array($option['id'],$optionsIds)){
-                            $dbOption = QuestionOption::find($option['id']);
-                            $dbOption->update($option);
-                        }
-                        else{
-                            $option['question_id'] = $dbQuestion->id;
-                            $dbOption = $this->createOption($option);
-                        }
-
-                        $foundOptionsIds[] = $dbOption->id;
-                    }
-                }
             }
 
             QuestionOption::whereIn('question_id', $questionsIds)->whereNotIn('id', $foundOptionsIds)->delete();
+
+            
             Question::where('test_id', $test->id)->whereNotIn('id', $foundQuestionsIds)->delete();
 
         }
