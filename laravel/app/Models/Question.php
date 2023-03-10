@@ -47,6 +47,7 @@ class Question extends Model implements HasMedia
         'test_id',
         'question_text',
         'points',
+        'position',
         'created_at',
         'updated_at',
         'deleted_at',
