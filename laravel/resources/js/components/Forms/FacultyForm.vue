@@ -108,7 +108,7 @@
     methods: {
 
       resetForm(){
-        this.form = this.initialForm;
+        this.form = {...this.initialForm};
       },
 
       loadData(id){

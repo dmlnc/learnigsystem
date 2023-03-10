@@ -21,6 +21,7 @@
         "core-js": "^3.29.0",
         "quill-image-uploader": "^1.2.4",
         "vue-router": "^4.1.6",
-        "vuedraggable": "^4.1.0"
+        "vuedraggable": "^4.1.0",
+        "vuex": "^4.0.2"
     }
 }

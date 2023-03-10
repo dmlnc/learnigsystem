@@ -109,7 +109,11 @@
 				this.$axios.post('/login', this.form)
   				.then(response => {
   				  const token = response.data.token;
+  				  const user = response.data.user;
+  				  const company = response.data.company;
   				  AuthUtil.setAuthToken(token);
+  				  AuthUtil.setUser(user);
+  				  AuthUtil.setCompany(company);
   				  router.push({ name: 'Home' })
   				})
   				.catch(error => {

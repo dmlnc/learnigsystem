@@ -24,7 +24,7 @@
                             <!-- <a-image  :src="item.url" alt=""/> -->
                             <a-avatar v-if="!item.loading" shape="square" :src="item.url" />
                             <div v-else>
-                                loading
+                                <loading-outlined :spin="true"/>
                             </div>
                         </template>
                     </a-list-item-meta>
@@ -34,7 +34,7 @@
     </div>
 </template>
 <script>
-import { InboxOutlined, DeleteOutlined } from "@ant-design/icons-vue";
+import { InboxOutlined, DeleteOutlined, LoadingOutlined } from "@ant-design/icons-vue";
 import { notification } from 'ant-design-vue';
 
 import AuthUtil from '@/libs/auth/auth';
@@ -64,24 +64,31 @@ export default ({
     },
     components: {
         InboxOutlined,
-        DeleteOutlined
+        DeleteOutlined,
+        LoadingOutlined
     },
 
     watch: {
-        async images() {
+        async images(newVal, oldVal) {
+            if(newVal == oldVal){
+                return
+            }
+
             if (Array.isArray(this.images)) {
-                this.allImages = [...this.images];
+                this.allImages = JSON.parse(JSON.stringify(this.images));
             } else {
                 this.allImages = [];
             }
             this.deletes = [];
+
             await this.getImages();
+
             this.emitSelectedIds();
         }
     },
 
     async mounted() {
-        this.allImages = [...this.images];
+        this.allImages = JSON.parse(JSON.stringify(this.images));
         this.deletes = [];
         await this.getImages();
         this.emitSelectedIds();
@@ -112,8 +119,7 @@ export default ({
     methods: {
         deleteImage(id) {
             this.loading = true;
-            this.allImages = this.allImages.filter(item => item.id != id);
-            this.deletes = [...this.deletes, id];
+            
 
             // TODO: Delete from db if model_id 0?
 
@@ -122,6 +128,11 @@ export default ({
                     notification.success({
                         message: 'Успешно',
                     });
+
+                    this.allImages = this.allImages.filter(item => item.id != id);
+                    this.deletes = [...this.deletes, id];
+
+                    this.emitSelectedIds();
                 })
                 .catch(error => {
                     notification.error({
@@ -136,7 +147,6 @@ export default ({
             this.allImages.forEach(obj => {
                 obj.loading = false;
             });
-
         },
 
         emitSelectedIds() {

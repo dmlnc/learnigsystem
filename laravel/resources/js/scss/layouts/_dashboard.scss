@@ -16,11 +16,11 @@
 	}
 
 	&:not(.layout-dashboard-rtl) .ant-layout-sider .brand img {
-		margin-right: 5px;
+		// margin-right: 5px;
 	}
 
 	&.layout-dashboard-rtl .ant-layout-sider .brand img {
-		margin-left: 5px;
+		// margin-left: 5px;
 	}
 
 	// Primary Sidebar
@@ -74,7 +74,9 @@
 				vertical-align: middle;
 			}
 			img {
-				height: 30px;
+				// height: 30px;
+				height: auto;
+				width: 100%;
 			}
 		}
 		&.ant-layout-sider-dark .brand span {

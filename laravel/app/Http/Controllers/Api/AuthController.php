@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CompanyResource;
+use App\Http\Resources\ThumbnailResource;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -25,8 +27,31 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = User::where('email', $credentials['email'])->first();
+            if(!$user->isAdmin){
+                return response()->json(['message' => 'Access not allowed'], 401);
+            }
+
             $token = $user->createToken('spa')->plainTextToken;
-            return response()->json(['token' => $token], 200);
+
+            $data = [
+                'token' => $token,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'abilities' => $user->roles()->with('permissions')->get()
+                        ->pluck('permissions')
+                        ->flatten()
+                        ->pluck('title')
+                        ->toArray(),
+                ],
+
+                'company' => new CompanyResource($user->company),
+                
+            ];
+
+
+            
+            return response()->json($data, 200);
         }
 
         return response()->json(['message' => 'Invalid credentials'], 401);

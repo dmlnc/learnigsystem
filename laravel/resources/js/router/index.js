@@ -176,11 +176,8 @@ import AuthUtil from '@/libs/auth/auth';
 
 
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = localStorage.getItem('access_token');
-    if (isAuthenticated) {
-        AuthUtil.setAuthToken(isAuthenticated);
-    }
-
+    const isAuthenticated = AuthUtil.checkAuth();
+   
     if (!isAuthenticated && to.name !== 'Sign-In') {
         next({ name: 'Sign-In' });
     } else {

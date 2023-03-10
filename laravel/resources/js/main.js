@@ -30,6 +30,8 @@ import router from './router'
 // import './plugins/click-away'
 import axios from './libs/auth/axios';
 
+import store from './store'
+
 
 
 const app  = createApp({
@@ -39,6 +41,7 @@ const app  = createApp({
 app.config.globalProperties.$axios = axios;
 app.use(router);
 app.use(Antd);
+app.use(store)
 
 
 

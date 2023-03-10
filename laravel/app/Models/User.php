@@ -12,15 +12,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens, HasFactory, Notifiable;
-
+    use InteractsWithMedia;
     use SoftDeletes;
-    use Notifiable;
-    use HasFactory;
 
     public $table = 'users';
 
@@ -84,6 +85,40 @@ class User extends Authenticatable
         if ($input) {
             $this->attributes['password'] = Hash::needsRehash($input) ? Hash::make($input) : $input;
         }
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $thumbnailWidth  = 200;
+        $thumbnailHeight = 200;
+
+        $thumbnailPreviewWidth  = 300;
+        $thumbnailPreviewHeight = 300;
+
+        $previewWidth = 600;
+        $previewHeight = 600;
+
+
+        $this->addMediaConversion('thumbnail')
+            ->width($thumbnailWidth)
+            ->height($thumbnailHeight)
+            ->fit('crop', $thumbnailWidth, $thumbnailHeight)
+            ->background('ffffff');
+
+        $this->addMediaConversion('preview_thumbnail')
+            ->width($thumbnailPreviewWidth)
+            ->height($thumbnailPreviewHeight)
+            ->fit('contain', $thumbnailPreviewWidth, $thumbnailPreviewHeight);
+
+        $this->addMediaConversion('preview')
+            ->width($previewWidth)
+            ->height($previewHeight)
+            ->fit('contain', $previewWidth, $previewHeight);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function roles()

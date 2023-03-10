@@ -10,7 +10,7 @@ class ThumbnailResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'preview_url' => $this->preview_url,
+            // 'preview_url' => $this->preview_url,
             'url' => $this->getUrl('thumbnail'),
             'name' => $this->name,
 

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CompanyResource;
+use App\Models\Company;
 use Illuminate\Http\Request;
 
 class CompanyApiController extends Controller
@@ -34,9 +36,9 @@ class CompanyApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Company $company)
     {
-        //
+        return new CompanyResource($company);
     }
 
     /**
@@ -46,9 +48,18 @@ class CompanyApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Company $company)
     {
-        //
+         $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'images'=> 'array',
+        ]);
+
+        $company->update($validatedData);
+
+        (new MediaController)->syncMedia($request->input('images', []), $company->id);
+
+        return new CompanyResource($company);
     }
 
     /**
@@ -61,4 +72,11 @@ class CompanyApiController extends Controller
     {
         //
     }
+
+    public function storeMedia(Request $request)
+    {
+        $model = new Company();
+        return  (new MediaController)->storeMedia($request, $model, 'company_logo');
+    }
+
 }

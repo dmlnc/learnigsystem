@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\TestsApiController;
 
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CompanyApiController;
 use App\Http\Controllers\Api\MediaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,10 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {
     // Route::get('/user', 'UserController@getUser');
     Route::resource('users', UsersApiController::class);
+
+    Route::apiResource('companies', CompanyApiController::class)->only(['show', 'update']);
+    Route::post('/companies/media', [CompanyApiController::class, 'storeMedia']);
+
 
 
     Route::apiResource('academies', AcademyApiController::class);

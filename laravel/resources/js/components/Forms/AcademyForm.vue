@@ -107,7 +107,7 @@ import { notification } from 'ant-design-vue';
     methods: {
 
       resetForm(){
-        this.form = this.initialForm;
+        this.form = {...this.initialForm};
       },
 
       loadData(id){
