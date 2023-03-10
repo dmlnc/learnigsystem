@@ -37,6 +37,8 @@ class UpdateTestRequest extends FormRequest
             'is_published' => [
                 'boolean',
             ],
+            'questions' => [
+            ],
         ];
     }
 }

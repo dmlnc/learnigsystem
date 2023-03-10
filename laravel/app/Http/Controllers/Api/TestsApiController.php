@@ -75,53 +75,67 @@ class TestsApiController extends Controller
     public function update(UpdateTestRequest $request,Lesson $lesson, Test $test)
     {
         $test->update($request->validated());
-        $questions = $test->questions()->pluck('id')->toArray();
+
+        $questionsIds = $test->questions()->pluck('id')->toArray();
+        $optionsIds = $test->questions->options()->pluck('id')->toArray();
+
+
         (new MediaController)->syncMedia($request->input('images', []), $test->id);
 
         if(!empty($request->questions)){
-            $questionsReq = $request->input('questions');
-            $foundQuestions = [];
+            $questionsReq = $request->input('questions', []);
+            $foundQuestionsIds = [];
+            $foundOptionsIds = [];
+
             foreach ($questionsReq as $question){
 
-                if(isset($question['id'])){
-
-                    if(in_array($question['id'],$questions)){
-                        $quest = Question::find($question['id']);
-                        $quest->update($question);
-                        $foundQuestions[] = $question['id'];
-                        $options = $quest->options()->pluck('id')->toArray();
-                        $foundOptions = [];
-                        if(isset($question['options'])) {
-                            foreach ($question['options'] as $option) {
-                                if (isset($option['id'])) {
-                                    if (in_array($question['id'], $questions)) {
-                                        QuestionOption::find($option['id'])->update($option);
-                                        $foundOptions[] = $option['id'];
-                                    }
-                                } else {
-                                    $option['question_id'] = $question['id'];
-                                    $option = $this->createOption($option);
-                                    $foundOptions[] = $option->id;
-                                }
-                            }
-                        }
-
-                        $d = QuestionOption::where('question_id', $question['id'])->whereNotIn('id', $foundOptions)->pluck('id');
-//                        Log::info($d);
-                        QuestionOption::destroy($d);
+                if(!isset($question['id'])){
+                    $question['id'] = 'NEW';
                 }
+
+                if(in_array($question['id'],$questionsIds)){
+                    $dbQuestion = Question::find($question['id']);
+                    $dbQuestion->update($question);
                 }
                 else{
                     $question['test_id'] = $test->id;
-                    $q = $this->createQuestion($question);
-                    $foundQuestions[] = $q['id'];
+                    $dbQuestion = $this->createQuestion($question);
+                }
+
+                $questionImages = [];
+                if(isset($question['images']) && $question['images']!=null){
+                    $questionImages = $question['images'];
+                }
+                
+                (new MediaController)->syncMedia($questionImages, $dbQuestion->id);
+
+
+                $foundQuestionsIds[] = $dbQuestion->id;
+
+                if(isset($question['options'])) {
+                    foreach ($question['options'] as $option) {
+
+                        if(!isset($option['id'])){
+                            $option['id'] = 'NEW';
+                        }
+
+                        if(in_array($option['id'],$optionsIds)){
+                            $dbOption = QuestionOption::find($option['id']);
+                            $dbOption->update($option);
+                        }
+                        else{
+                            $option['question_id'] = $dbQuestion->id;
+                            $dbOption = $this->createOption($option);
+                        }
+
+                        $foundOptionsIds[] = $dbOption->id;
+                    }
                 }
             }
 
-            $allqids= Question::where('test_id', $test->id)->whereNotIn('id', $foundQuestions)->pluck('id');
-            $d = QuestionOption::whereIn('question_id', $allqids)->pluck('id');
-            QuestionOption::destroy($d);
-            Question::destroy($allqids);
+            QuestionOption::whereIn('question_id', $questionsIds)->whereNotIn('id', $foundOptionsIds)->delete();
+            Question::where('test_id', $test->id)->whereNotIn('id', $foundQuestionsIds)->delete();
+
         }
 
         return (new TestFullResource($test))
