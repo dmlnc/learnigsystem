@@ -65,24 +65,7 @@ class LessonsApiController extends Controller
 
         $validated = $request->validated();
 
-        $long_text = $validated['long_text'];
-
-        preg_match_all('/<img.*?src="(data:image\/.*?;base64,.*?)".*?>/i', $long_text, $matches);
-
-        foreach ($matches[1] as $match) {
-            // $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $match);
-            $imageData = $match;
-            $imageType = explode('/', explode(';', $match)[0])[1];
-            $fileName = 'quill-' . uniqid() . '.' . $imageType;
-            // $article->addMediaFromBase64($image)->toMediaCollection('article-images');
-         
-            $media = $lesson->addMediaFromBase64($imageData)->usingFileName($fileName)->toMediaCollection('quill_images');
-
-            $long_text = str_replace($match, $media->getUrl(), $long_text); 
-        }
-
-        $validated['long_text'] = $long_text;
-
+        $validated['long_text'] = (new MediaController)->syncImagesFromHtml($lesson, $validated['long_text']);
 
         $lesson->update($validated);
 
@@ -92,6 +75,8 @@ class LessonsApiController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_ACCEPTED);
     }
+
+    
 
     // public function edit(Lesson $lesson)
     // {
