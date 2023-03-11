@@ -70,7 +70,8 @@ class LessonsApiController extends Controller
         preg_match_all('/<img.*?src="(data:image\/.*?;base64,.*?)".*?>/i', $long_text, $matches);
 
         foreach ($matches[1] as $match) {
-            $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $match);
+            // $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $match);
+            $imageData = $match;
             $imageType = explode('/', explode(';', $match)[0])[1];
             $fileName = 'quill-' . uniqid() . '.' . $imageType;
             // $article->addMediaFromBase64($image)->toMediaCollection('article-images');
