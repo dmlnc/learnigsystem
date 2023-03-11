@@ -62,7 +62,26 @@ class LessonsApiController extends Controller
 
     public function update(UpdateLessonRequest $request, Course $course, Lesson $lesson)
     {
-        $lesson->update($request->validated());
+
+        $validated = $request->validated();
+
+        $long_text = $validated['long_text'];
+
+        preg_match_all('/<img.*?src="(data:image\/.*?;base64,.*?)".*?>/i', $long_text, $matches);
+
+        foreach ($matches[1] as $match) {
+            $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $match);
+            $imageType = explode('/', explode(';', $match)[0])[1];
+            $fileName = 'quill-' . uniqid() . '.' . $imageType;
+            // $article->addMediaFromBase64($image)->toMediaCollection('article-images');
+         
+            $media = $lesson->addMediaFromBase64($imageData, $fileName)->toMediaCollection('quill_images');
+
+            $long_text = str_replace($match, '<img src="' . $media->getUrl() . '">', $long_text); 
+        }
+
+
+        $lesson->update($validated);
 
         (new MediaController)->syncMedia($request->input('images', []), $lesson->id);
 
