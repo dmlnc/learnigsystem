@@ -76,7 +76,7 @@ class LessonsApiController extends Controller
             $fileName = 'quill-' . uniqid() . '.' . $imageType;
             // $article->addMediaFromBase64($image)->toMediaCollection('article-images');
          
-            $media = $lesson->addMediaFromBase64($imageData, $fileName)->toMediaCollection('quill_images');
+            $media = $lesson->addMediaFromBase64($imageData, $fileName)->toMediaCollection('quill_images')->acceptsMimeTypes(['jpg', 'jpeg', 'png', 'gif']);
 
             $long_text = str_replace($match, '<img src="' . $media->getUrl() . '">', $long_text); 
         }
