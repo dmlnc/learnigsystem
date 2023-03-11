@@ -80,6 +80,8 @@ class LessonsApiController extends Controller
             $long_text = str_replace($match, '<img src="' . $media->getUrl() . '">', $long_text); 
         }
 
+        $validated['long_text'] = $long_text;
+
 
         $lesson->update($validated);
 
