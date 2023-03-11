@@ -78,7 +78,7 @@ class LessonsApiController extends Controller
          
             $media = $lesson->addMediaFromBase64($imageData)->usingFileName($fileName)->toMediaCollection('quill_images');
 
-            $long_text = str_replace($match, '<img src="' . $media->getUrl() . '">', $long_text); 
+            $long_text = str_replace($match, $media->getUrl(), $long_text); 
         }
 
         $validated['long_text'] = $long_text;
