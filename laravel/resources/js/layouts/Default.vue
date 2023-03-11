@@ -6,21 +6,21 @@
 	<div>
 
 		<!-- Default Layout -->
-		<a-layout class="layout-default" id="layout-default" :class="[layoutClass]">
+		<a-layout class="layout-default" id="layout-default" :class="[layoutClass]" >
 
 			<!-- Layout Header ( Navbar ) -->
-			<DefaultHeader></DefaultHeader>
+			<!-- <DefaultHeader></DefaultHeader> -->
 			<!-- / Layout Header ( Navbar ) -->
 
 
 			<!-- Page Content -->
-			<a-layout-content>
+			<a-layout-content style="display: flex; align-items: center;">
 				<router-view />
 			</a-layout-content>
 			<!-- / Page Content -->
 
 			<!-- Layout Footer -->
-			<DefaultFooter></DefaultFooter>
+			<!-- <DefaultFooter></DefaultFooter> -->
 			<!-- / Layout Footer -->
 
 		</a-layout>
@@ -31,13 +31,12 @@
 
 <script>
 
-	import DefaultHeader from '../components/Headers/DefaultHeader.vue' ;
-	import DefaultFooter from '../components/Footers/DefaultFooter.vue' ;
+	// import DefaultHeader from '../components/Headers/DefaultHeader.vue' ;
+	// import DefaultFooter from '../components/Footers/DefaultFooter.vue' ;
 
 	export default ({
 		components: {
-			DefaultHeader,
-			DefaultFooter,
+			// DefaultFooter,
 		},
 		data() {
 			return {

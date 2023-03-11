@@ -12,8 +12,46 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
+
     /**
-     * Login a user and return an access token.
+     * Login a user and return an access token for study.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function studyLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $user = User::where('email', $credentials['email'])->first();
+            
+            $token = $user->createToken('spa')->plainTextToken;
+
+            $data = [
+                'token' => $token,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ],
+
+                'company' => new CompanyResource($user->company),
+                
+            ];
+
+
+            
+            return response()->json($data, 200);
+        }
+
+        return response()->json(['message' => 'Invalid credentials'], 401);
+    }
+
+    /**
+     * Login a user and return an access token for admin panel.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse

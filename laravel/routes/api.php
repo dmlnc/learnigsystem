@@ -56,3 +56,12 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']
 });
 
 Route::post('v1/login', [AuthController::class, 'login']);
+
+Route::post('v1/study/login', [AuthController::class, 'login']);
+
+
+Route::group(['prefix' => 'v1/study', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {
+
+    
+});
+

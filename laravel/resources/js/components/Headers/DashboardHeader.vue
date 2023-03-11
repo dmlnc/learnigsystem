@@ -142,8 +142,8 @@ export default ({
             this.formVisible = false;
         },
         showForm() {
-            this.formId = this.company.id;
-            this.formVisible = true;
+            // this.formId = this.company.id;
+            // this.formVisible = true;
         }
 
     },

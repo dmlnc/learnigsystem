@@ -4,14 +4,14 @@
  -->
 
 <template>
-	<div class="sign-in">
+	<div class="sign-in" style="width: 100%;">
 		
 		<a-row type="flex" :gutter="[24,24]" justify="space-around" align="middle">
 
 			<!-- Sign In Form Column -->
 			<a-col :span="24" :md="12" :lg="{span: 12, offset: 0}" :xl="{span: 6, offset: 2}" class="col-form">
-				<h1 class="mb-15">Sign In</h1>
-				<h5 class="font-regular text-muted">Enter your email and password</h5>
+				<h1 class="mb-15">Войти</h1>
+				<h5 class="font-regular text-muted">Укажите ваш email и пароль</h5>
 
 				<a-form
 					id="components-form-demo-normal-login"
@@ -28,7 +28,7 @@
 							v-model:value="form.email"
 						/>
 					</a-form-item>
-					<a-form-item class="mb-5" label="Password" name="password" :colon="false">
+					<a-form-item class="mb-5" label="Пароль" name="password" :colon="false">
 						<a-input
 							v-model:value="form.password"
 						type="password"/>
@@ -36,19 +36,18 @@
 					
 					<a-form-item>
 						<a-button type="primary" block html-type="submit" class="login-form-button">
-							SIGN IN
+							Войти
 						</a-button>
 					</a-form-item>
 				</a-form>
 				<!-- / Sign In Form -->
 
-				<p class="font-semibold text-muted">Don't have an account? <router-link to="/sign-in" class="font-bold text-dark">Sign Up</router-link></p>
 			</a-col>
 			<!-- / Sign In Form Column -->
 
 			<!-- Sign In Image Column -->
 			<a-col :span="24" :md="12" :lg="12" :xl="12" class="col-img">
-				<img src="images/img-signin.jpg" alt="">
+				<img src="https://doodleipsum.com/700/flat?i=042c8576c15db0c6506f27e0736510a5" alt="">
 			</a-col>
 			<!-- Sign In Image Column -->
 
@@ -75,10 +74,10 @@
 				},
 				rules: {
       				email: [
-      				  	{ required: true, message: 'Please enter your email', trigger: 'blur' },
+      				  	{ required: true, message: 'Пожалуйста, введите email', trigger: 'blur' },
       				],
       				password:[
-      					{ required: true, message: 'Please enter your password', trigger: 'blur' },
+      					{ required: true, message: 'Пожалуйста, введите пароль', trigger: 'blur' },
       				]
       			}
 

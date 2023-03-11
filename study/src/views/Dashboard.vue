@@ -9,7 +9,7 @@
 
 
         <a-row :gutter="24">
-            <a-col :span="24" :lg="12" :xl="8" class="mb-24">
+            <!-- <a-col :span="24" :lg="12" :xl="8" class="mb-24">
                 <a-card>
                     <template #cover>
                         <img alt="example" src="https://doodleipsum.com/900x525/flat?i=7e83ba77e602c180346437548c5df08e" />
@@ -20,7 +20,7 @@
                     <a-card-meta title="Академии" description="Страница просмотра всех академий">
                     </a-card-meta>
                 </a-card>
-            </a-col>
+            </a-col> -->
             <a-col :span="24" :lg="12" :xl="8" class="mb-24">
                 <a-card>
                 	<template #cover>
@@ -33,7 +33,7 @@
                     </a-card-meta>
                 </a-card>
             </a-col>
-            <a-col :span="24" :lg="12" :xl="8" class="mb-24">
+            <!-- <a-col :span="24" :lg="12" :xl="8" class="mb-24">
                 <a-card>
                 	<template #cover>
                         <img alt="example" src="https://doodleipsum.com/900x525/flat?i=330e732c9b45f0dbb3a6728d57e02977" />
@@ -44,7 +44,7 @@
                     <a-card-meta title="Пользователи" description="Страница просмотра всех пользователей">
                     </a-card-meta>
                 </a-card>
-            </a-col>
+            </a-col> -->
         </a-row>
     </div>
 </template>
