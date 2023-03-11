@@ -104,7 +104,7 @@ class MediaController extends Controller
         return $html;
     }
 
-    function syncMedia(array $media_ids, int $model_id): void
+    public function syncMedia(array $media_ids, int $model_id): void
     {
         Media::whereIn('id', $media_ids)
             ->where('model_id', 0)
