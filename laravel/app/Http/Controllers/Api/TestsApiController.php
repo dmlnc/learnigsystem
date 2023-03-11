@@ -26,7 +26,13 @@ class TestsApiController extends Controller
         return response([
             'data' => TestResource::collection($lesson->tests),
             'meta' => [
-                'title'  => $lesson->title,
+                'lesson'  => [
+                    'title' => $lesson->title,
+                ],
+                'course'  => [
+                    'id' => $lesson->course->id,
+                    'title' => $lesson->course->title,
+                ],
             ],
         ]);
     }
@@ -51,7 +57,12 @@ class TestsApiController extends Controller
     }
 
     public function createQuestion($question){
+
+        if(empty($question['question_text']) || trim($question['question_text'])=='' || $question['question_text'] == null){
+            $question['question_text'] = 'Нет текста';
+        }
         $q = Question::create($question);
+
         if(!isset($question['options'])){
             return $q;
         }
@@ -64,6 +75,9 @@ class TestsApiController extends Controller
         (new MediaController)->syncMedia($questionImages, $q->id);
 
         foreach ($question['options'] as $option){
+            if(empty($option['option_text']) || trim($option['option_text'])=='' || $option['option_text'] == null){
+                continue;
+            }
             $option['question_id'] = $q->id;
             $optionsIds = $this->createOption($option)['id'];
         }
@@ -105,8 +119,14 @@ class TestsApiController extends Controller
                 }
 
                 if(in_array($question['id'],$questionsIds)){
+                    if(empty($question['question_text']) || trim($question['question_text'])=='' || $question['question_text'] == null){
+                        $question['question_text'] = 'Нет текста';
+                    }
+
                     $dbQuestion = Question::find($question['id']);
                     $dbQuestion->update($question);
+
+                    $questionImages = [];
 
                     if(isset($question['images']) && $question['images']!=null){
                         $questionImages = $question['images'];
@@ -124,6 +144,10 @@ class TestsApiController extends Controller
                             }
 
                             $option['question_id'] = $dbQuestion->id;
+
+                            if(empty($option['option_text']) || trim($option['option_text'])=='' || $option['option_text'] == null){
+                                continue;
+                            }
 
                             if(in_array($option['id'], $questionOptionsTemp)){
                                 $dbOption = QuestionOption::find($option['id']);

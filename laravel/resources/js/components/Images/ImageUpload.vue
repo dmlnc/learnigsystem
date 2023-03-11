@@ -1,20 +1,25 @@
 <template>
     <div>
         <div>
-            <a-upload-dragger @change="handleFileStatus" :disabled="maxCount <= allImages.length" :headers="getHeaders" :show-upload-list="false" name="file" :maxCount="maxCount - allImages.length" :multiple="maxCount - allImages.length > 1" :action="`/api/v1/${action}`">
-                <p class="ant-upload-drag-icon">
+            <a-upload-dragger :class="{'uploader-disabled': maxCount <= allImages.length}" @change="handleFileStatus" :disabled="maxCount <= allImages.length" :headers="getHeaders" :show-upload-list="false" name="file" :maxCount="maxCount - allImages.length" :multiple="maxCount - allImages.length > 1" :action="`/api/v1/${action}`">
+                <p class="ant-upload-drag-icon" v-if="maxCount > allImages.length">
                     <inbox-outlined></inbox-outlined>
                 </p>
-                <p class="ant-upload-text">Загрузить изображение({{allImages.length}}/{{maxCount}})</p>
+                <p class="">Загрузить изображение({{allImages.length}}/{{maxCount}})</p>
             </a-upload-dragger>
         </div>
         <a-list size="small" v-if="allImages.length" item-layout="horizontal" :data-source="allImages">
             <template #renderItem="{ item }">
                 <a-list-item class="p-5">
                     <template #actions v-if="!item.loading">
-                        <a-button @click.prevent="deleteImage(item.id)" type="link" danger key="list-delete">
+                        <a-popconfirm @click.stop :title="'Уверены, что хотите удалить изображение?'" ok-text="Да" cancel-text="Нет" @confirm="deleteImage(item.id)">
+                            <a-button size="small" type="link" danger key="list-delete">
                             <delete-outlined />
                         </a-button>
+                        </a-popconfirm>
+                         <!-- <a-button @click.prevent="deleteImage(item.id)" type="link" danger key="list-delete">
+                            <delete-outlined />
+                        </a-button> -->
                     </template>
                     <a-list-item-meta description="">
                         <template #title>
@@ -24,7 +29,7 @@
                             <!-- <a-image  :src="item.url" alt=""/> -->
                             <a-avatar v-if="!item.loading" shape="square" :src="item.url" />
                             <div v-else>
-                                <loading-outlined :spin="true"/>
+                                <loading-outlined :spin="true" />
                             </div>
                         </template>
                     </a-list-item-meta>
@@ -70,7 +75,7 @@ export default ({
 
     watch: {
         async images(newVal, oldVal) {
-            if(newVal == oldVal){
+            if (newVal == oldVal) {
                 return
             }
 
@@ -119,7 +124,7 @@ export default ({
     methods: {
         deleteImage(id) {
             this.loading = true;
-            
+
 
             // TODO: Delete from db if model_id 0?
 
@@ -137,7 +142,7 @@ export default ({
                 .catch(error => {
                     notification.error({
                         message: 'Ошибка',
-                        description: error,
+                        // description: error,
                     });
                 })
                 .then(() => {});
@@ -176,7 +181,7 @@ export default ({
                 this.allImages = this.allImages.filter(obj => obj.id !== file.uid);
             } else if (status === 'done') {
                 notification.success({
-                        message: 'Успешно',
+                    message: 'Успешно',
                 });
                 // Find object in allImages array with id = file.uid
                 const imageIndex = this.allImages.findIndex(obj => obj.id === file.uid);
@@ -206,6 +211,10 @@ export default ({
 
 </script>
 <style>
+.uploader-disabled {
+    opacity: 0.5;
+}
+
 .ant-list-item-meta-title {
     margin-bottom: 0;
     white-space: nowrap;

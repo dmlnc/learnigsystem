@@ -108,7 +108,7 @@ export default ({
             .catch(error => {
                 notification.error({
                     message: 'Ошибка',
-                    description: error,
+                    //description: error,
                 });
             })
             .then(()=>{
@@ -128,7 +128,7 @@ export default ({
             .catch(error => {
                 notification.error({
                     message: 'Ошибка',
-                    description: error,
+                    //description: error,
                 });
             })
             .then(()=>{

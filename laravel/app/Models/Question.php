@@ -55,20 +55,24 @@ class Question extends Model implements HasMedia
 
     public function registerMediaConversions(Media $media = null): void
     {
-        $thumbnailWidth  = 50;
-        $thumbnailHeight = 50;
+        
+        $thumbnailWidth  = 400;
+        $thumbnailHeight = 200;
 
-        $thumbnailPreviewWidth  = 120;
-        $thumbnailPreviewHeight = 120;
+        $thumbnailPreviewWidth  = 500;
+        $thumbnailPreviewHeight = 500;
 
         $this->addMediaConversion('thumbnail')
             ->width($thumbnailWidth)
             ->height($thumbnailHeight)
-            ->fit('crop', $thumbnailWidth, $thumbnailHeight);
+            ->fit('fill', $thumbnailWidth, $thumbnailHeight)
+            ->background('ffffff');
         $this->addMediaConversion('preview_thumbnail')
             ->width($thumbnailPreviewWidth)
             ->height($thumbnailPreviewHeight)
-            ->fit('crop', $thumbnailPreviewWidth, $thumbnailPreviewHeight);
+            ->fit('fill', $thumbnailWidth, $thumbnailHeight)
+            ->background('ffffff');
+
     }
 
     public function course()

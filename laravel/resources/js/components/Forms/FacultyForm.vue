@@ -121,7 +121,7 @@
             .catch(error => {
               notification.error({
                 message: 'Ошибка',
-                description: error,
+                //description: error,
               });
             })
             .then(()=>{
@@ -177,7 +177,7 @@
           .catch(error => {
             notification.error({
               message: 'Ошибка',
-              description: error,
+              //description: error,
             });
           });
 

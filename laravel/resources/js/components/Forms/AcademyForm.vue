@@ -120,7 +120,7 @@ import { notification } from 'ant-design-vue';
             .catch(error => {
                 notification.error({
                     message: 'Ошибка',
-                    description: error,
+                    //description: error,
                 });
             })
             .then(()=>{
@@ -176,7 +176,7 @@ import { notification } from 'ant-design-vue';
           .catch(error => {
               notification.error({
                 message: 'Ошибка',
-                description: error,
+                //description: error,
               });
           });
 

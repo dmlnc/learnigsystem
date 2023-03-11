@@ -150,7 +150,7 @@ export default ({
                 .catch(error => {
                     notification.error({
                         message: 'Ошибка loadData',
-                        description: error,
+                        //description: error,
                     });
                 })
                 .then(() => {
@@ -215,7 +215,7 @@ export default ({
                 .catch(error => {
                     notification.error({
                         message: 'Ошибка submitForm',
-                        description: error,
+                        //description: error,
                     });
                 });
 
