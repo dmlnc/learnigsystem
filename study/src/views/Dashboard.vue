@@ -27,9 +27,9 @@
                         <img alt="example" src="https://doodleipsum.com/900x525/flat?i=5087a915dddcb6e95b5262e070332347" />
                     </template>
                     <template class="ant-card-actions" #actions>
-                        <router-link :to="{ name: 'Courses-page'}"> Перейти</router-link>
+                        <router-link :to="{ name: 'Academies-page'}"> Перейти</router-link>
                     </template>
-                    <a-card-meta title="Курсы" description="Страница просмотра всех курсов">
+                    <a-card-meta title="Обучение" description="Страница просмотра всех курсов">
                     </a-card-meta>
                 </a-card>
             </a-col>

@@ -14,6 +14,12 @@ class LessonResource extends JsonResource
             'title' => $this->title,
             'short_text' => $this->short_text,
             'is_published' => $this->is_published,
+            'tests_count' => $this->whenLoaded('tests', function () {
+                return $this->tests_count;
+            }),
+            'finished_tests_count' => $this->whenLoaded('tests', function () {
+                return $this->tests->sum('test_finished');
+            }),
         ];
     }
 }

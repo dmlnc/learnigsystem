@@ -19,9 +19,7 @@ class Academy extends Model implements HasMedia
 
     public $table = 'academies';
 
-    protected $appends = [
-        'thumbnail',
-    ];
+   
 
     protected $dates = [
         'created_at',
@@ -65,19 +63,6 @@ class Academy extends Model implements HasMedia
     // {
     //     return $this->belongsTo(User::class);
     // }
-
-    public function getThumbnailAttribute()
-    {
-        return $this->getMedia('academy_thumbnail')->map(function ($item) {
-            $media = $item->toArray();
-            $media['url'] = $item->getUrl();
-            $media['thumbnail'] = $item->getUrl('thumbnail');
-            $media['preview_thumbnail'] = $item->getUrl('preview_thumbnail');
-            $media['preview'] = $item->getUrl('preview');
-
-            return $media;
-        });
-    }
 
     // public function students()
     // {

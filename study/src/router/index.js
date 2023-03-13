@@ -36,23 +36,44 @@ let routes = [{
     },
 
     {
-        path: '/academies/:academy_id',
-        name: 'Faculties-page',
+        path: '/academies/:faculty_id/courses/',
+        name: 'Courses-page',
         layout: "dashboard",
-        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Faculties.vue'),
+        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Courses.vue'),
     },
+
     {
-        path: '/courses/:course_id/lessons',
+        path: '/academies/:faculty_id/courses/:course_id',
         name: 'Lessons-page',
         layout: "dashboard",
         component: () => import( /* webpackChunkName: "dashboard" */ '../views/Lessons.vue'),
     },
+
     {
-        path: '/courses/:course_id/lessons/:lesson_id/tests',
-        name: 'Tests-page',
+        path: '/academies/:faculty_id/courses/:course_id/lesson/:lesson_id',
+        name: 'Lesson-page',
         layout: "dashboard",
-        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Tests.vue'),
+        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Lesson.vue'),
     },
+
+    // {
+    //     path: '/academies/:academy_id',
+    //     name: 'Faculties-page',
+    //     layout: "dashboard",
+    //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/Faculties.vue'),
+    // },
+    // {
+    //     path: '/courses/:course_id/lessons',
+    //     name: 'Lessons-page',
+    //     layout: "dashboard",
+    //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/Lessons.vue'),
+    // },
+    // {
+    //     path: '/courses/:course_id/lessons/:lesson_id/tests',
+    //     name: 'Tests-page',
+    //     layout: "dashboard",
+    //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/Tests.vue'),
+    // },
     // {
     //     path: '/courses/:course_id/lessons/:lesson_id/tests/:test_id',
     //     name: 'Test-page',
@@ -60,19 +81,14 @@ let routes = [{
     //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/Test.vue'),
     // },
 
-    {
-        path: '/users',
-        name: 'Users-page',
-        layout: "dashboard",
-        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Users.vue'),
-    },
+    // {
+    //     path: '/users',
+    //     name: 'Users-page',
+    //     layout: "dashboard",
+    //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/Users.vue'),
+    // },
 
-    {
-        path: '/courses',
-        name: 'Courses-page',
-        layout: "dashboard",
-        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Courses.vue'),
-    },
+    
 
     // {
     //     path: '/courses/:course_id',

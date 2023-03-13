@@ -7,7 +7,11 @@ use App\Http\Controllers\Controller;
 // use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\LessonResource;
+use App\Http\Resources\LessonStudyResource;
+
 use App\Http\Resources\TestResource;
+use App\Models\Academy;
+use App\Models\Faculty;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Question;
@@ -23,44 +27,105 @@ use Illuminate\Http\Response;
 
 class StudyApiController extends Controller
 {
-    public function courses(Request $request)
+
+
+    // Академии->факультеты->курсы
+
+    // Чаще всего, но не всегда
+    // 1 академия
+    // 1 Факульет
+
+ 
+// Рестораны - академии +
+// Сотрудники +
+// Должности - факультеты +
+// Меню - 
+// Учебные курсы +
+// Аттестация - тесты??
+// Общение -
+// Новости компании -
+// Библиотека - ???
+// Управлявющий - ???
+// Отчеты -
+// График работы ??? 
+// Настройки - профиль компании +
+
+    public function faculties(Request $request)
     {
 
         $user = auth()->user();
 
-        return new CourseResource($user->courses()->where('is_published', 1)->get());
+        $academies = Academy::whereHas('faculties', function ($query) use ($user) {
+            $query->whereHas('users', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            });
+        })->with(['faculties' => function ($query) use ($user) {
+            $query->whereHas('users', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            });
+        }])->select(['id', 'name'])->get();
+
+
+        // $academies = $user->faculties->academies
+
+        return response()->json(['data'=>$academies]);
+
+        // return new CourseResource($user->faculties()->get(['id', 'name']));
     }
 
-    public function course(Request $request, Course $course)
+    public function courses(Request $request, Faculty $faculty)
+    {
+        // $user = auth()->user();
+        return [
+            'data' =>  CourseResource::collection($faculty->courses()->where('is_published', 1)->get()),
+            'meta' => [
+                'name' => $faculty->name,
+            ]
+        ];
+    }
+
+
+
+    public function lessons(Request $request, Faculty $faculty, Course $course)
     {
         abort_if(($course->is_published == 0), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $user = auth()->user();
-        $hasAccess = $user->courses()->where('id', $course->id)->exists();
-        abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        // $hasAccess = $user->courses()->where('id', $course->id)->exists();
+
+        // abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return response([
-            'data' => 
-                new CourseResource($course
-                    ->load([
-                        "lessons" => function($q) use($user){
+            'data' => LessonResource::collection(
+                $course->lessons()
+                    ->where('is_published', 1)
+                    ->withCount(['tests' => function ($query) {
+                        $query->where('is_published', 1);
+                    }])
+                    ->with([
+                        'tests' => function($q) use($user){
                             $q->where("is_published",1);
                             $q->withCount([
-                                'tests' => function ($query) use ($user) {
-                                    $query->where('is_published', 1);
-                                },
-                                'test_results'=> function ($query) use ($user) {
+                                'test_results as test_finished'=> function ($query) use ($user) {
                                     $query->where('student_id', $user->id);
-                                },
+                                }
                             ]);
                         }
                     ])
-                ),
+                    ->get()
+            ),
             'meta' => [
-                // 'course' => Course::get(['id', 'title']),
+                'course'=>[
+                    'id' => $course->id,
+                    'name'=>$course->title,
+                ],
+                'faculty'=>[
+                    'id' => $faculty->id,
+                    'name'=>$faculty->name,
+                ],
             ],
         ]);
-
-        
     }
     
     // public function lessons(Request $request, Course $course)
@@ -73,39 +138,52 @@ class StudyApiController extends Controller
     //     return new LessonResource($course->lessons()->where('is_published', 1)->get());
     // }
 
-    public function lesson(Request $request, Course $course, Lesson $lesson)
+    public function lesson(Request $request, Faculty $faculty, Course $course, Lesson $lesson)
     {
-        abort_if(($course->is_published == 0) || ($lesson->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(($course->is_published == 0) || ($lesson->is_published == 0), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $user = auth()->user();
-        $hasAccess = $user->courses()->where('id', $course->id)->exists();
-        abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // $hasAccess = $user->courses()->where('id', $course->id)->exists();
+        // abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         abort_if($lesson->course_id != $course->id, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
 
-        return new LessonResource($lesson
-            ->load([
-                "tests" => function($q) use($user){
-                    $q->where("is_published",1);
-                    $q->with(['test_results' => function ($query) use ($user) {
-                            $query->where('student_id', $user->id);
-                            $query->take(1);
-                            // $query->select(['test_results.id','test_results.score']);
-                        }
-                    ]);
-                    $q->withCount([
-                        'test_results as test_finished'=> function ($query) use ($user) {
-                            $query->where('student_id', $user->id);
-                        }
-                    ]);
-                }
-            ])
-        );
+         return response([
+            'data'=> new LessonStudyResource($lesson
+                ->load([
+                    "tests" => function($q) use($user){
+                        $q->where("is_published",1);
+                        $q->with(['test_results' => function ($query) use ($user) {
+                                $query->where('student_id', $user->id);
+                                $query->take(1);
+                                // $query->select(['test_results.id','test_results.score']);
+                            }
+                        ]);
+                        $q->withCount([
+                            'test_results as test_finished'=> function ($query) use ($user) {
+                                $query->where('student_id', $user->id);
+                            }
+                        ]);
+                    }
+                ])
+            ),
+            'meta' => [
+                'course'=>[
+                    'id' => $course->id,
+                    'name'=>$course->title,
+                ],
+                'faculty'=>[
+                    'id' => $faculty->id,
+                    'name'=>$faculty->name,
+                ],
+            ],
+        ]);
     }
 
     public function test(Request $request, Course $course, Lesson $lesson, Test $test)
     {
-        abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $user = auth()->user();
         $hasAccess = $user->courses()->where('id', $course->id)->exists();
         abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -119,7 +197,7 @@ class StudyApiController extends Controller
 
     public function answer(Request $request, Course $course, Lesson $lesson, Test $test)
     {
-        abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $user = auth()->user();
         $hasAccess = $user->courses()->where('id', $course->id)->exists();
         abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -195,7 +273,7 @@ class StudyApiController extends Controller
 
     public function result(Request $request, Course $course, Lesson $lesson, Test $test)
     {
-        abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $user = auth()->user();
         $hasAccess = $user->courses()->where('id', $course->id)->exists();
         abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -221,7 +299,7 @@ class StudyApiController extends Controller
 
     public function checkResult(Request $request, Course $course, Lesson $lesson, Test $test)
     {
-        abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $user = auth()->user();
         $hasAccess = $user->courses()->where('id', $course->id)->exists();
         abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');

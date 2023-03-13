@@ -7,6 +7,10 @@ use App\Http\Controllers\Api\UsersApiController;
 use App\Http\Controllers\Api\LessonsApiController;
 use App\Http\Controllers\Api\TestsApiController;
 use App\Http\Controllers\Api\QuestionsApiController;
+use App\Http\Controllers\Api\StudyApiController;
+
+
+
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyApiController;
@@ -60,7 +64,19 @@ Route::post('v1/login', [AuthController::class, 'login']);
 Route::post('v1/study/login', [AuthController::class, 'login']);
 
 
+
+
+
+
 Route::group(['prefix' => 'v1/study', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('faculties', [StudyApiController::class, 'faculties']);
+
+    Route::get('faculties/{faculty}/courses', [StudyApiController::class, 'courses']);
+
+    Route::get('faculties/{faculty}/courses/{course}/lessons', [StudyApiController::class, 'lessons']);
+    Route::get('faculties/{faculty}/courses/{course}/lessons/{lesson}', [StudyApiController::class, 'lesson']);
+
+
 
     
 });

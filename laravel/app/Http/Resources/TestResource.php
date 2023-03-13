@@ -15,6 +15,9 @@ class TestResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'is_published' => $this->is_published,
+            'test_results' => $this->whenLoaded('test_results', function () {
+               return $this->test_results;
+            }),
         ];
     }
 
