@@ -34,7 +34,18 @@ let routes = [{
         layout: "dashboard",
         component: () => import( /* webpackChunkName: "dashboard" */ '../views/Academies.vue'),
     },
-
+    {
+        path: '/posts',
+        name: 'Posts-page',
+        layout: "dashboard",
+        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Posts.vue'),
+    },
+    // {
+    //     path: '/posts/:post_id',
+    //     name: 'Post-page',
+    //     layout: "dashboard",
+    //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/PostPage.vue'),
+    // },
     {
         path: '/academies/:academy_id',
         name: 'Faculties-page',

@@ -2,19 +2,27 @@
     <a-drawer :title="'Пользователь ' + name" :width="320" :visible="visible" :body-style="{ paddingBottom: '80px' }" :footer-style="{ textAlign: 'right' }" @close="onClose">
         <a-skeleton active :loading="loading">
             <a-form layout="vertical" ref="formRef" :model="form" :rules="rules" @submit="handleSubmit" :hideRequiredMark="true">
+                <a-form-item class="mb-10" label="Изображение" name="image" :colon="false">
+                  <ImageUpload v-model="form.images" action='users/media' :images="form.media" :maxCount="1"></ImageUpload>
+                </a-form-item>
+
                 <a-form-item class="mb-10" label="Факультет" name="faculties" :colon="false">
                     <a-select :labelInValue="false" v-model:value="form.faculties" mode="multiple" :options="data.academies" :field-names="{ label: 'label', value: 'value', options: 'children' }"></a-select>
                 </a-form-item>
-
                 <a-form-item class="mb-10" label="Роль" name="faculties" :colon="false">
                     <a-select v-model:value="form.roles" mode="multiple" :options="data.roles"></a-select>
                 </a-form-item>
-
-                <a-form-item class="mb-10" label="Имя" name="name" :colon="false">
+                <a-form-item class="mb-10" label="ФИО" name="name" :colon="false">
                     <a-input v-model:value="form.name" />
                 </a-form-item>
                 <a-form-item class="mb-10" label="Почта" name="email" :colon="false">
                     <a-input v-model:value="form.email" />
+                </a-form-item>
+                <a-form-item class="mb-10" label="Номер телефона" name="phone" :colon="false">
+                  <a-input v-model:value="form.phone" />
+                </a-form-item>
+                <a-form-item class="mb-10" label="Дата рождения" name="birthday" :colon="false">
+                  <a-date-picker v-model:value="form.birthday" style="width: 100%" />
                 </a-form-item>
                 <a-form-item v-if="initialId == null" class="mb-10" label="Пароль" name="password" :colon="false">
                     <a-input type="password" v-model:value="form.password" />
@@ -30,8 +38,8 @@
 </template>
 <script>
 import { notification } from 'ant-design-vue';
-
-
+import ImageUpload from '@/components/Images/ImageUpload.vue'
+import dayjs from 'dayjs';
 export default ({
 
 
@@ -42,9 +50,13 @@ export default ({
             initialForm: {
                 name: '',
                 faculties: [],
+                birthday:'',
                 email: '',
+                phone:'',
                 password: '',
                 roles: [],
+                images:[],
+                media:[]
             },
             data: {},
             initialId: null,
@@ -98,7 +110,9 @@ export default ({
         this.fetchCreate();
         this.resetForm();
     },
-
+    components:{
+      ImageUpload
+    },
     methods: {
 
         resetForm() {
@@ -138,10 +152,10 @@ export default ({
                     let transformedRoles = response.data.data.roles.map(role => (role.id));
                     
                     let transformedAcademies = response.data.data.faculties.map(faculty => (faculty.id));
-
-
+                    console.log(response.data.data.birthday)
+                    response.data.data.birthday = response.data.data.birthday ? dayjs(response.data.data.birthday,'YYYY-MM-DD') : null;
+                    console.log(response.data.data.birthday)
                     this.form = response.data.data
-
                     this.form.roles = transformedRoles;
                     this.form.faculties = transformedAcademies;
 

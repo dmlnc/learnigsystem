@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\StudyApiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyApiController;
 use App\Http\Controllers\Api\MediaController;
+use App\Http\Controllers\Api\PostApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {
     // Route::get('/user', 'UserController@getUser');
     Route::resource('users', UsersApiController::class);
+    Route::post('/users/media', [UsersApiController::class, 'storeMedia']);
 
     Route::apiResource('companies', CompanyApiController::class)->only(['show', 'update']);
     Route::post('/companies/media', [CompanyApiController::class, 'storeMedia']);
@@ -57,6 +59,9 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']
     Route::post('/questions/media', [QuestionsApiController::class, 'storeMedia']);
 
     Route::post('/logout', 'AuthController@logout');
+    Route::resource('posts', PostApiController::class);
+    Route::post('/posts/media', [PostApiController::class, 'storeMedia']);
+
 });
 
 Route::post('v1/login', [AuthController::class, 'login']);

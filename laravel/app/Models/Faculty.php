@@ -5,6 +5,7 @@ namespace App\Models;
 use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Faculty extends Model 
@@ -26,6 +27,11 @@ class Faculty extends Model
         'name',
         'academy_id',
     ];
+
+    public function posts(): MorphMany
+    {
+        return $this->morphMany(Post::class, 'postable');
+    }
 
     protected function serializeDate(DateTimeInterface $date)
     {

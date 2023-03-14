@@ -15,7 +15,7 @@ class TestFullResource extends JsonResource
             'description' => $this->description,
             'position' => $this->position,
             'is_published' => $this->is_published,
-            'questions' => QuestionResource::collection($this->questions)
+            'questions' => QuestionResource::collection($this->questions()->orderBy('position', 'ASC')->get())
         ];
     }
 }

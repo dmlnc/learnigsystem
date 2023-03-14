@@ -9,7 +9,7 @@
             </a-col>
             <a-col :span="24" :lg="12" :xl="8" class="mb-24" v-for="course in courses" :key="course.id">
                 <a-skeleton active :loading="loading">
-                    <a-card>
+                    <a-card class="h-full d-flex flex-column">
                         <template #cover>
                             <img v-if="course.thumbnail == null" :src="'https://doodleipsum.com/900x525/flat?n='+course.id" />
                             <img v-else :src="course.thumbnail.url" />
@@ -35,7 +35,7 @@
             </a-col>
             <a-col :span="24" :lg="12" :xl="8" class="mb-24">
                 <a-skeleton active :loading="loading">
-                    <a-card>
+                    <a-card class="h-full d-flex flex-column">
                         <template #cover>
                             <img alt="example" src="https://doodleipsum.com/900x525/outline?i=f9b600d9d2fd687422cee8090c384c28" />
                         </template>

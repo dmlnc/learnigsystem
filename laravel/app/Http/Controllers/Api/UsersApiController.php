@@ -10,6 +10,8 @@ use App\Models\Academy;
 use App\Models\Course;
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -20,21 +22,20 @@ class UsersApiController extends Controller
 
         $user = auth()->user();
 
-        return new UserResource(User::where('company_id', $user->company_id)->with(['roles', 'faculties'])->get());
+        return UserResource::collection(User::where('company_id', $user->company_id)->with(['roles', 'faculties'])->get());
     }
 
     public function store(StoreUserRequest $request)
     {
         $data = $request->validated();
-
         $authUser = auth()->user();
         $data['company_id'] = $authUser->company_id;
-
-        $user = User::create();
+        $data['birthday'] = Carbon::parse($data['birthday']);
+        $user = User::create($data);
         $user->roles()->sync($request->input('roles', []));
         $user->faculties()->sync($request->input('faculties', []));
-      
-        
+
+        (new MediaController)->syncMedia($request->input('images', []), $user->id);
 
         return (new UserResource($user))
             ->response()
@@ -61,10 +62,13 @@ class UsersApiController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user->update($request->validated());
+        $data = $request->validated();
+        $data['birthday'] = Carbon::parse($data['birthday']);
+        $user->update($data);
 
         $user->roles()->sync($request->input('roles', []));
         $user->faculties()->sync($request->input('faculties', []));
+        (new MediaController)->syncMedia($request->input('images', []), $user->id);
 
 
         return (new UserResource($user))
@@ -84,6 +88,11 @@ class UsersApiController extends Controller
     //         ],
     //     ]);
     // }
+    public function storeMedia(Request $request)
+    {
+        $model = new User();
+        return  (new MediaController)->storeMedia($request, $model, 'user_avatar');
+    }
 
     public function destroy(User $user)
     {

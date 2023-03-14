@@ -5,22 +5,19 @@ namespace App\Models;
 use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Academy extends Model implements HasMedia
+class Post extends Model implements HasMedia
 {
-    
+
     use SoftDeletes;
     use InteractsWithMedia;
     use HasFactory;
 
-    public $table = 'academies';
-
-
+    public $table = 'posts';
 
     protected $dates = [
         'created_at',
@@ -29,9 +26,19 @@ class Academy extends Model implements HasMedia
     ];
 
     protected $fillable = [
-        'name',
+        'title',
+        'text',
+        'postable_id',
+        'postable_type',
         'company_id',
+        'user_id'
     ];
+
+
+    public function postable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 
     public function registerMediaConversions(Media $media = null): void
     {
@@ -58,29 +65,5 @@ class Academy extends Model implements HasMedia
             ->height($previewHeight)
             ->fit('contain', $previewWidth, $previewHeight);
 
-    }
-
-    // public function teacher()
-    // {
-    //     return $this->belongsTo(User::class);
-    // }
-
-    // public function students()
-    // {
-    //     return $this->belongsToMany(User::class);
-    // }
-    public function posts(): MorphMany
-    {
-        return $this->morphMany(Post::class, 'postable');
-    }
-
-    public function faculties()
-    {
-        return $this->hasMany(Faculty::class);
-    }
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
     }
 }
