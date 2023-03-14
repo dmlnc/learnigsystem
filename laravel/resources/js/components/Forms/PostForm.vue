@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-      :title="'Урок ' + name"
+      :title="'Статья ' + form.title"
       :width="992"
       :visible="visible"
       :body-style="{ paddingBottom: '80px' }"
@@ -16,35 +16,41 @@
           @submit="handleSubmit"
           :hideRequiredMark="true"
       >
+        <a-form-item class="mb-10" label="Тип" name="faculties" :colon="false">
+          <a-select
+              v-model:value="form.postable_type"
+              :options="postable_types"
+              :field-names="{ label: 'name', value: 'model'}"
+          ></a-select>
+        </a-form-item>
+        <a-form-item class="mb-10" label="" v-if="form.postable_type == 'App\\Models\\Academy'" name="academy"  :colon="false">
+          <a-select
+              v-model:value="form.postable_id"
+              :options="meta?.academies"
+              :field-names="{ label: 'name', value: 'id'}"
+          ></a-select>
+        </a-form-item>
+        <a-form-item class="mb-10" label="" v-if="form.postable_type == 'App\\Models\\Faculty'" name="faculty"  :colon="false">
+          <a-select
+              v-model:value="form.postable_id"
+              :options="meta?.faculties"
+              :field-names="{ label: 'name', value: 'id'}"
+          ></a-select>
+        </a-form-item>
         <a-form-item class="mb-10" label="Изображение" name="image" :colon="false">
-          <ImageUpload v-model="form.images" action='lessons/media' :images="form.media" :maxCount="1"></ImageUpload>
+          <ImageUpload v-model="form.images" action='posts/media' :images="form.media" :maxCount="1"></ImageUpload>
         </a-form-item>
         <a-form-item class="mb-10" label="Название" name="title" :colon="false">
           <a-input
               v-model:value="form.title"
           />
         </a-form-item>
-        <a-form-item class="mb-10" label="Описание" name="short_text" :colon="false">
-          <a-textarea v-model:value="form.short_text" />
-        </a-form-item>
-        <a-form-item class="mb-20" label="Текст урока" name="long_text" :colon="false">
-
+        <a-form-item class="mb-20" label="Текст статьи" name="text" :colon="false">
           <QuillEditor v-if="visible" theme="snow"
-                     v-model:content="form.long_text"
-                     @ready="onEditorReady($event)"
-                     :options="editorOption"
-                     contentType="html"
+                       v-model:content="form.text"
+                       :options="editorOption"
+                       contentType="html"
           />
-        </a-form-item>
-
-        
-        <a-form-item class="mb-10" label="" name="is_published" :colon="false">
-
-        <a-checkbox
-            v-model:checked="form.is_published"
-        >
-          Урок опубликован (доступен ученикам)
-        </a-checkbox>
         </a-form-item>
         <a-form-item>
           <a-button type="primary" block html-type="submit" >
@@ -62,14 +68,11 @@
 
 <script>
 
-
 import ImageUpload from '@/components/Images/ImageUpload.vue'
-
-import { notification } from 'ant-design-vue';
-import AuthUtil from '@/libs/auth/auth';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import ImageUploader from 'quill-image-uploader';
 import { QuillEditor, Quill } from '@vueup/vue-quill'
+import { notification } from 'ant-design-vue';
 
 
 export default ({
@@ -78,19 +81,31 @@ export default ({
   data() {
     return {
       text: null,
-      data: {},
-      imageUrl: null,
+      postable_types:[
+        {
+          name: "Компания",
+          model: "App\\Models\\Company"
+        },
+        {
+          name: "Академия",
+          model: "App\\Models\\Academy"
+        },
+        {
+          name: "Факультет",
+          model: 'App\\Models\\Faculty'
+        },
+      ],
       initialForm: {
         title: '',
         thumbnail:'',
-        short_text:'',
-        long_text: '',
-        description:'',
-        position:'',
-        is_published: true,
+        postable_type:"App\\Models\\Company",
+        postable_id:'',
+        text: '',
         media:[],
         images:[],
       },
+      initialId: null,
+      loading: false,
       editorOption: {
         modules: {
           toolbar: {
@@ -113,17 +128,12 @@ export default ({
           },
         }
       },
-      initialId: null,
-      loading: false,
+      meta:[],
       form: {},
       rules: {
         title: [
           { required: true, message: 'Введите название', trigger: 'blur' },
         ],
-        short_text: [
-          { required: true, message: 'Введите описание', trigger: 'blur' },
-        ],
-
       }
     }
   },
@@ -137,12 +147,9 @@ export default ({
     ImageUpload,
   },
   computed:{
-    getAuthToken(){
-      return AuthUtil.getAuthToken()
-    },
     name(){
       if(this.initialId != null){
-        return this.form.title
+        return this.form.name
       }
 
       return '';
@@ -157,8 +164,6 @@ export default ({
   watch:{
     visible(){
       this.visibleForm = this.visible;
-      this.resetForm()
-
     },
     id(){
       this.initialId = this.id;
@@ -166,31 +171,47 @@ export default ({
         this.loadData(this.id)
       }
       else{
+
         this.loading = false;
       }
+
     },
   },
 
   mounted(){
+    this.fetchCreate()
     this.resetForm();
   },
 
   methods: {
-    onEditorReady (e) {
-      console.log(e);
-      console.log(this.form.long_text);
-      // e.container.querySelector('.ql-blank').innerHTML = this.form.long_text
-    },
-    resetForm(){
-      console.log('reset')
 
-      this.form = {...this.initialForm, course_id: this.$route.params.course_id};
+    resetForm(){
+      this.form = {...this.initialForm};
+    },
+    fetchCreate(){
+      this.loading = true;
+      this.$axios.get('/posts/create')
+          .then(response => {
+            this.meta = response.data.meta;
+            console.log(this.meta)
+            // router.push({ name: 'Academy', params: {academy_id: } })
+          })
+          .catch(error => {
+            notification.error({
+              message: 'Ошибка',
+              //description: error,
+            });
+          })
+          .then(()=>{
+            this.loading = false;
+          });
     },
     loadData(id){
       this.loading = true;
-      this.$axios.get(`courses/${this.$route.params.course_id}/lessons/${id}`)
+      this.$axios.get('/posts/'+id)
           .then(response => {
             this.form = response.data.data;
+            // router.push({ name: 'Academy', params: {academy_id: } })
           })
           .catch(error => {
             notification.error({
@@ -211,6 +232,9 @@ export default ({
 
     handleSubmit(e) {
       e.preventDefault();
+      // console.log(this.$refs.formRef.validate())
+      // // this.$refs.formRef.target.validate();
+      // console.log(this.form
       this.$refs.formRef
           .validate()
           .then((e) => {})
@@ -223,7 +247,7 @@ export default ({
 
     submitForm(){
       let data = {...this.form};
-      let url = `courses/${this.$route.params.course_id}/lessons`;
+      let url = "posts";
       if(this.initialId!=null){
         data._method = "put";
         url = url + '/' + this.initialId;
@@ -237,7 +261,6 @@ export default ({
             this.initialId = response.data.data.id;
             this.loadData(this.initialId);
             this.$emit('save');
-            this.$emit('close');
             notification.success({
               message: 'Успешно',
             });
@@ -258,6 +281,3 @@ export default ({
 })
 
 </script>
-<style lang="scss">
-
-</style>

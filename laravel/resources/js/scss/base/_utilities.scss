@@ -192,6 +192,25 @@ $neutral-colors: (
 .h-full {
 	height: 100%;
 }
+.d-flex{
+	display: flex!important;
+}
+.flex-column{
+	flex-direction: column!important;
+}
+.mt-auto{
+	margin-top: auto!important;
+}
+.ql-tooltip {
+	z-index: 10;
+	top:-10px!important;
+	left: 0px !important;
+}
+.ql-editor .ql-video{
+	width: 100%;
+	height: 56.25vw;
+	max-height: calc(800px / 16 * 9);
+}
 // / Height
 
 // Shadows
