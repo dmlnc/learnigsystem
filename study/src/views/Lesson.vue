@@ -67,13 +67,13 @@
             <div v-else>
                 <a-typography-title :level="4" type="secondary" class="mb-20">К этому уроку нет тестов</a-typography-title>
             </div>
-            <a-row v-if="meta!=null" :gutter="24">
+            <a-row v-if="meta!=null" class="mb-20" :gutter="24">
                 <a-col :span="24" :lg="12" :xl="12" v-if="meta.lessons.previousLesson!=null">
                     <router-link class="text-primary" :to="{ name: 'Lesson-page', params: {lesson_id : meta.lessons.previousLesson.id}}">
                         <a-card>
                             <a-card-meta :description="'Урок '+meta.lessons.previousLesson.title">
                                 <template #title>
-                                    <arrow-left-outlined /> Предыдущий урок 
+                                    <arrow-left-outlined /> Назад 
                                 </template>
                             </a-card-meta>
                         </a-card>
@@ -86,7 +86,7 @@
                         <a-card>
                             <a-card-meta  :description="'Урок '+meta.lessons.nextLesson.title">
                                 <template #title>
-                                    Следующий урок <arrow-right-outlined />
+                                    Далее <arrow-right-outlined />
                                 </template>
                             </a-card-meta>
                         </a-card>

@@ -18,6 +18,9 @@ class TestResource extends JsonResource
             'test_results' => $this->whenLoaded('test_results', function () {
                return $this->test_results;
             }),
+            'questions' => $this->whenLoaded('questions', function () {
+               return $this->questions;
+            }),
         ];
     }
 
