@@ -23,9 +23,23 @@
           </a-button>
         </div>
         <div class="card" v-else-if="result">
-          Тест окончен
-          Итоговый балл: {{ this.result.score }}
-          Максимальный балл: {{ this.result.max_score }}
+          <a-typography-title :level="4" class="mb-20">Тест окончен</a-typography-title>
+          <div class="d-flex">
+            <a-progress
+                type="circle"
+                :stroke-color="{
+                '0%': '#108ee9',
+                '100%': '#87d068',
+              }"
+                :percent="this.result.score/this.result.max_score * 100"
+            />
+            <div class="ml-20 d-flex" style="flex-direction: column;justify-content: center;">
+              <p>  Итоговый балл: {{ this.result.score }}</p>
+              <p>  Максимальный балл: {{ this.result.max_score }}</p>
+              <p>  Правильных ответов: Нужно добавить</p>
+            </div>
+          </div>
+
         </div>
       </a-card>
       <div v-else>
