@@ -166,8 +166,9 @@ class StudyApiController extends Controller
                         $q->where("is_published",1);
                         $q->with(['test_results' => function ($query) use ($user) {
                                 $query->where('student_id', $user->id);
-                                $query->take(1);
+
                                 // $query->select(['test_results.id','test_results.score']);
+                                $query->first();
                             }
                         ]);
                         $q->withCount([

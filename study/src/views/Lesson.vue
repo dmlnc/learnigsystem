@@ -44,13 +44,19 @@
                                  
                                 </template> -->
                                 <template class="ant-card-actions" #actions>
-                                    К тесту
+                                    <span v-if="test.test_results.length > 0">Тест пройден</span>
+                                    <span v-else>К тесту</span>
                                 </template>
                                 <a-card-meta :description="test.description">
                                     <template #title>
                                         <a-avatar v-if="test.thumbnail == null" class="mr-10" :src="`https://doodleipsum.com/100x100/avatar?bg=lightgray&n=${test.id}`" />
                                         <a-avatar v-else class="mr-10" :src="test.thumbnail.url" />
                                         Тест {{test.title}}
+                                        <a-typography-text  v-if="test.test_results.length > 0" type="success">
+                                            <check-circle-outlined />
+                                        </a-typography-text>
+
+                                        
                                     </template>
                                 </a-card-meta>
                             </a-card>
@@ -93,12 +99,12 @@
 </template>
 <script>
 import { notification } from 'ant-design-vue';
-import { ArrowRightOutlined, ArrowLeftOutlined } from '@ant-design/icons-vue';
+import { ArrowRightOutlined, ArrowLeftOutlined, CheckCircleOutlined   } from '@ant-design/icons-vue';
 
 
 export default ({
     components: {
-        ArrowRightOutlined, ArrowLeftOutlined
+        ArrowRightOutlined, ArrowLeftOutlined, CheckCircleOutlined
     },
     data() {
         return {
@@ -112,9 +118,12 @@ export default ({
     },
     watch: {
         $route(to, from) {
-          if (to.params.lesson_id !== this.lesson.id) {
-             this.loadData();
-          }
+            if(!to.params.lesson_id){
+                return
+            }
+            if (to.params.lesson_id !== this.lesson.id) {
+               this.loadData();
+            }
         },
 
     },
