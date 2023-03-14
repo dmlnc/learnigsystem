@@ -80,7 +80,7 @@ Route::group(['prefix' => 'v1/study', 'as' => 'api.', 'middleware' => ['auth:san
 
     Route::get('faculties/{faculty}/courses/{course}/lessons', [StudyApiController::class, 'lessons']);
     Route::get('faculties/{faculty}/courses/{course}/lessons/{lesson}', [StudyApiController::class, 'lesson']);
-    Route::get('faculties/{faculty}/courses/{course}/lessons/{lesson}/test/{test}', [StudyApiController::class, 'lesson']);
+    Route::get('faculties/{faculty}/courses/{course}/lessons/{lesson}/test/{test}', [StudyApiController::class, 'test']);
 
 
 
