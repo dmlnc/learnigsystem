@@ -56,7 +56,7 @@
                                                 <a-input class="mb-10" v-model:value="option.option_text" />
                                                 <!-- </a-form-item> -->
                                                 <div style="display: flex; justify-content: space-between;">
-                                                    <a-checkbox v-model:checked="option.is_correct">
+                                                    <a-checkbox v-model:checked="option.is_correct" >
                                                         Верный ответ
                                                     </a-checkbox>
                                                     <a-button size="small" type="link" danger @click="removeOption(element,index)" class="mb-10">

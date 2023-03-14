@@ -55,6 +55,12 @@ let routes = [{
         layout: "dashboard",
         component: () => import( /* webpackChunkName: "dashboard" */ '../views/Lesson.vue'),
     },
+    {
+        path: '/academies/:faculty_id/courses/:course_id/lesson/:lesson_id/test/:test_id',
+        name: 'Test-page',
+        layout: "dashboard",
+        component: () => import( /* webpackChunkName: "dashboard" */ '../views/Test.vue'),
+    },
 
     // {
     //     path: '/academies/:academy_id',
@@ -74,12 +80,7 @@ let routes = [{
     //     layout: "dashboard",
     //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/Tests.vue'),
     // },
-    // {
-    //     path: '/courses/:course_id/lessons/:lesson_id/tests/:test_id',
-    //     name: 'Test-page',
-    //     layout: "dashboard",
-    //     component: () => import( /* webpackChunkName: "dashboard" */ '../views/Test.vue'),
-    // },
+
 
     // {
     //     path: '/users',

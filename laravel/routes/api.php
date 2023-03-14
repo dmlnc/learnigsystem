@@ -54,14 +54,15 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']
 
     Route::apiResource('lessons/{lesson}/tests', TestsApiController::class);
 
-//    Route::apiResource('tests', TestsApiController::class);
+    Route::apiResource('tests', TestsApiController::class);
     Route::post('/tests/media', [TestsApiController::class, 'storeMedia']);
     Route::post('/questions/media', [QuestionsApiController::class, 'storeMedia']);
 
-    Route::post('/logout', 'AuthController@logout');
+
     Route::resource('posts', PostApiController::class);
     Route::post('/posts/media', [PostApiController::class, 'storeMedia']);
 
+    Route::post('/logout', 'AuthController@logout');
 });
 
 Route::post('v1/login', [AuthController::class, 'login']);

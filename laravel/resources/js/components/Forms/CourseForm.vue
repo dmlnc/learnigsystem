@@ -21,6 +21,11 @@
                 <a-form-item class="mb-10" label="Описание" name="description" :colon="false">
                     <a-textarea v-model:value="form.description" />
                 </a-form-item>
+                <a-checkbox
+                    v-model:checked="form.is_published"
+                >
+                  Курс опубликован (доступен ученикам)
+                </a-checkbox>
                 <a-form-item>
                     <a-button type="primary" block html-type="submit">
                         Сохранить
@@ -49,6 +54,7 @@ export default ({
                 faculties: [],
                 media: [],
                 images: [],
+                is_published:false,
             },
             initialId: null,
             loading: false,

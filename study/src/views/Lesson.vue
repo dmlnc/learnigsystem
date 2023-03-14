@@ -36,12 +36,11 @@
                 <a-row :gutter="24">
                     <a-col :span="24" :lg="12" :xl="8" class="mb-24 h-full" v-for="test in lesson.tests" :key="test.id">
                         <!-- TODO: Установить пройденные тесты, роут на тест -->
-                        <router-link class="h-full" :to="{ name: 'Lessons-page', params: {course_id : test.id}}">
+                        <router-link class="h-full" :to="{ name: 'Test-page', params: {test_id : test.id}}">
                             <a-card class="h-full">
                                 <!-- <template #cover>
                                     <img v-if="test.thumbnail == null" :src="'https://doodleipsum.com/900x525/flat?n='+test.id" />
                                     <img v-else :src="test.thumbnail.url" />
-                                 
                                 </template> -->
                                 <template class="ant-card-actions" #actions>
                                     <span v-if="test.test_results.length > 0">Тест пройден</span>
@@ -125,7 +124,6 @@ export default ({
                this.loadData();
             }
         },
-
     },
 
 
