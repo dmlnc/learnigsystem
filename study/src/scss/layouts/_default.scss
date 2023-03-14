@@ -8,7 +8,9 @@ body {
 	padding: 0 0 30px 0;
 	background-color: $color-gray-2;
 }
-
+.d-flex{
+	display: flex!important;
+}
 .ant-layout{
 		background: #fafafa;
 		min-height: 100vh!important;
