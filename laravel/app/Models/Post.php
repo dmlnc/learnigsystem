@@ -34,6 +34,34 @@ class Post extends Model implements HasMedia
         'user_id'
     ];
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'postable_id')
+            ->where('posts.postable_type', Company::class);
+    }
+
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class, 'postable_id')
+            ->where('posts.postable_type', Faculty::class);
+    }
+
+    public function academy()
+    {
+        return $this->belongsTo(Academy::class, 'postable_id')
+            ->where('posts.postable_type', Academy::class);
+    }
+
+    // public function company()
+    // {
+    //     return $this->morphToMany(Company::class, 'postable');
+    // }
+
+    public function faculties()
+    {
+        return $this->morphToMany(Faculty::class, 'postable');
+    }
+
 
     public function postable(): MorphTo
     {

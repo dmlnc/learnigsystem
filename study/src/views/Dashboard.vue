@@ -60,11 +60,35 @@
 export default ({
     data() {
         return {
+            posts: [],
 
         }
     },
 
-    mounted() {},
+    mounted() {
+        this.getPosts();
+    },
+
+    methods: {
+
+        getPosts(){
+            this.$axios.get(`/posts`)
+                .then(response => {
+                    this.posts = response.data.data;
+                    // this.parentName = response.data.meta.name;
+                    // router.push({ name: 'Academy', params: {academy_id: } })
+                })
+                .catch(error => {
+                    notification.error({
+                        message: 'Ошибка',
+                        //description: error,
+                    });
+                })
+                .then(() => {
+                    this.loading = false;
+                });
+        }
+    }
 
 })
 

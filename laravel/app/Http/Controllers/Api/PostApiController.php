@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\PostFullResourсe;
+use App\Http\Resources\PostStudyResourсe;
 use Illuminate\Http\Response;
 
 class PostApiController extends Controller
@@ -24,6 +25,36 @@ class PostApiController extends Controller
 
         return PostResourсe::collection(Post::where('company_id', $user->company_id)->get());
     }
+
+    public function indexStudy()
+    {
+        $user = auth()->user();
+
+        $posts = Post::where(function ($query) use ($user) {
+                $query->whereHas('company', function ($query) use ($user) {
+                    return $query->where('id', $user->company_id);
+                })
+                ->orWhereHas('faculty', function ($query) use ($user) {
+                    return $query->whereIn('id', $user->faculties->pluck('id')->toArray());
+                })
+                ->orWhereHas('academy', function ($query) use ($user) {
+                    return $query->whereIn('id', $user->faculties()->with('academy')->get()->pluck('academy.id'));
+                });
+                // ->orWhereHasMorph('postable', [Faculty::class], function ($query, $type) use ($user) {
+                    
+                // })
+                // ->orWhereHasMorph('postable', [Academy::class], function ($query, $type) use ($user) {
+                //     $query->whereIn('id', $user->faculties()->with('academy')->get()->pluck('academy.id'));
+                // });
+            })
+        ->get();
+
+
+
+
+        return PostStudyResourсe::collection($posts);
+    }
+
 
     /**
      * Store a newly created resource in storage.
