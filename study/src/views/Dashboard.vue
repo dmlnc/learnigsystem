@@ -11,7 +11,7 @@
                     <a-col :span="24" :lg="12" :xl="12" class="mb-24">
                         <a-card>
                             <template #cover>
-                                <img alt="example" src="https://doodleipsum.com/900x525/flat?i=5087a915dddcb6e95b5262e070332347" />
+                                <img src="https://doodleipsum.com/900x525/flat?i=5087a915dddcb6e95b5262e070332347" />
                             </template>
                             <template class="ant-card-actions" #actions>
                                 <router-link :to="{ name: 'Academies-page'}"> Перейти</router-link>
@@ -22,8 +22,21 @@
                     </a-col>
                 </a-row>
             </a-col>
-            <a-col :span="24" :lg="12" :xl="12" class="mb-24">
+            <a-col :span="24" :lg="12" :xl="12" class="mb-24" v-if="posts.length>0">
                 {{posts}}
+                <a-card v-for="post in posts">
+                    <template #cover>
+                        <img v-if="post.media.length > 0" :src="post.media[0].src" />
+                    </template>
+
+                    <a-card-meta :title="post.title">
+                        <template #description>
+                            <a-typography-paragraph :ellipsis="{ rows: 1, expandable: true, symbol: 'more' }"  :content="post.text">
+                                
+                            </a-typography-paragraph>
+                        </template>
+                    </a-card-meta>
+                </a-card>
             </a-col>
         </a-row>
     </div>
