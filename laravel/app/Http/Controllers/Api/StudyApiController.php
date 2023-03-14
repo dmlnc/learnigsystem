@@ -193,7 +193,7 @@ class StudyApiController extends Controller
         ]);
     }
 
-    public function test(Request $request, Course $course, Lesson $lesson, Test $test)
+    public function test(Request $request, Faculty $faculty, Course $course, Lesson $lesson, Test $test)
     {
         // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
         // $user = auth()->user();
