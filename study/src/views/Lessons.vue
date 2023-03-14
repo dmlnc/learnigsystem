@@ -1,9 +1,13 @@
 <template>
     <div>
         <a-typography-title :level="5" class="mb-40">
-            <a-typography-text v-if="meta!=null" type="secondary">Факультет {{meta.faculty.name}}</a-typography-text>
+            <router-link v-if="meta!=null" :to="{ name: 'Courses-page', params: {faculty_id : meta.faculty.id}}">
+                <a-typography-text type="secondary">Факультет {{meta.faculty.name}}</a-typography-text>
+            </router-link>
             <a-divider type="vertical" />
-            <a-typography-text v-if="meta!=null" type="secondary">Курс {{meta.course.name}}</a-typography-text>
+            <router-link v-if="meta!=null" :to="{ name: 'Lessons-page', params: {course_id : meta.course.id}}">
+                <a-typography-text type="secondary">Курс {{meta.course.name}}</a-typography-text>
+            </router-link>
             <a-divider type="vertical" />
             Уроки
         </a-typography-title>
@@ -20,7 +24,7 @@
                         Урок {{lesson.title}}
                     </template>
                     <template #extra>
-                        <a-typography-text  v-if="lesson.tests_count!=0" :type="((lesson.finished_tests_count == lesson.tests_count) && lesson.tests_count!=0) ? 'success' : 'secondary'">{{lesson.finished_tests_count}} / {{lesson.tests_count}}</a-typography-text>
+                        <a-typography-text v-if="lesson.tests_count!=0" :type="((lesson.finished_tests_count == lesson.tests_count) && lesson.tests_count!=0) ? 'success' : 'secondary'">{{lesson.finished_tests_count}} / {{lesson.tests_count}}</a-typography-text>
                     </template>
                     {{lesson.short_text}}
                 </a-card>
@@ -29,8 +33,6 @@
     </div>
 </template>
 <script>
-
-
 import { notification } from 'ant-design-vue';
 
 export default ({

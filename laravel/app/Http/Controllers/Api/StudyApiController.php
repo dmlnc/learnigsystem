@@ -77,7 +77,7 @@ class StudyApiController extends Controller
     {
         // $user = auth()->user();
         return [
-            'data' =>  CourseResource::collection($faculty->courses()->where('is_published', 1)->get()),
+            'data' =>  CourseResource::collection($faculty->courses()->get()),
             'meta' => [
                 'name' => $faculty->name,
             ]
@@ -148,8 +148,18 @@ class StudyApiController extends Controller
 
         abort_if($lesson->course_id != $course->id, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $previousLesson = Lesson::where('course_id', $course->id)->where('id', '<', $lesson->id)->select('id', 'title')->orderBy('id', 'desc')->first();
+        $nextLesson = Lesson::where('course_id', $course->id)->where('id', '>', $lesson->id)->select('id', 'title')->orderBy('id', 'asc')->first();
 
-         return response([
+
+        $lessonsMeta = [
+            'nextLesson' => $nextLesson,
+            'previousLesson' => $previousLesson,
+        ];
+
+
+
+        return response([
             'data'=> new LessonStudyResource($lesson
                 ->load([
                     "tests" => function($q) use($user){
@@ -177,6 +187,7 @@ class StudyApiController extends Controller
                     'id' => $faculty->id,
                     'name'=>$faculty->name,
                 ],
+                'lessons' => $lessonsMeta,
             ],
         ]);
     }
