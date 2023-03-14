@@ -77,7 +77,7 @@ class StudyApiController extends Controller
     {
         // $user = auth()->user();
         return [
-            'data' =>  CourseResource::collection($faculty->courses()->get()),
+            'data' =>  CourseResource::collection($faculty->courses()->where('is_published', 1)->get()),
             'meta' => [
                 'name' => $faculty->name,
             ]
