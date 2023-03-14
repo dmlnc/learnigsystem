@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {
     // Route::get('/user', 'UserController@getUser');
     Route::resource('users', UsersApiController::class);
+    Route::post('/users/media', [UsersApiController::class, 'storeMedia']);
 
     Route::apiResource('companies', CompanyApiController::class)->only(['show', 'update']);
     Route::post('/companies/media', [CompanyApiController::class, 'storeMedia']);

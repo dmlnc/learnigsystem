@@ -48,6 +48,9 @@ class User extends Authenticatable implements HasMedia
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'birthday',
+        'company_id',
         'email_verified_at',
         'password',
         'remember_token',
@@ -63,6 +66,7 @@ class User extends Authenticatable implements HasMedia
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+//        'birthday' => 'timestamp',
     ];
 
     public function getIsAdminAttribute()
