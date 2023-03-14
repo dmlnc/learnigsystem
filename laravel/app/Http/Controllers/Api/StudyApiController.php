@@ -207,7 +207,7 @@ class StudyApiController extends Controller
         return new TestResource($test->load('questions', 'questions.options'));
     }
 
-    public function answer(Request $request, Course $course, Lesson $lesson, Test $test)
+    public function answer(Request $request, Faculty $faculty, Course $course, Lesson $lesson, Test $test)
     {
         // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $user = auth()->user();
@@ -236,8 +236,17 @@ class StudyApiController extends Controller
             'student_id' => $user->id,
         ]);
 
+        // answers => [
+        //     [
+        //         'id' => question id,
+        //         'answers' => 
+        //         [
+        //             1,2,3,4
+        //             
+        //         ],
+        //     ],
 
-
+        // ]
 
         foreach ($request_questions as $q){
             $db_q = $questions->where('id', $q['id'])->first();
@@ -246,14 +255,13 @@ class StudyApiController extends Controller
 
             $answers_id = [];
             $total_correct = 1;
-            foreach ($q['answers'] as $id => $answer){
-                if($answer == true){
+            foreach ($q['answers'] as $id){
+                // if($answer == true){
                     $correct = 0;
                     if(isset($db_q->options)){
                         $db_o = $db_q->options->where('id', $id)->first();
                         $correct = $db_o->is_correct;
                         // Log::info($total_correct);
-
                         $total_correct = $total_correct && $correct;
                         // Log::info($total_correct);
                     }
@@ -266,7 +274,7 @@ class StudyApiController extends Controller
                         'question_id' => $q['id'],
                         'option_id' => $id,
                     ]);
-                }
+                // }
             }
             // Log::info($total_correct);
 
@@ -279,7 +287,13 @@ class StudyApiController extends Controller
         $testResult->update(['score'=>$totalScore]);
 
 
-        return ['score' => $totalScore, 'max_score'=> $maxScore, 'test_result_id' => $testResult->id];
+        return response()->json([
+            'data'=> [
+                'score' => $totalScore, 
+                'max_score'=> $maxScore, 
+                'test_result_id' => $testResult->id
+            ]
+        ]);
         // return new TestResource($test->load('questions', 'questions.options'));
     }
 
