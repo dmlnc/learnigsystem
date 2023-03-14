@@ -22,10 +22,10 @@
             Ответить
           </a-button>
         </div>
-        <div class="card" v-else>
+        <div class="card" v-else-if="result">
           Тест окончен
-          Итоговый балл: {{ this.score }}
-          Правильных ответов : {{ this.rightAnswers }}
+          Итоговый балл: {{ this.result.score }}
+          Максимальный балл: {{ this.result.max_score }}
         </div>
       </a-card>
       <div v-else>
@@ -53,9 +53,8 @@ export default ({
       loading: true,
       meta: null,
       activeQuestionAnswers:[],
-      score: 0,
-      rightAnswers: 0,
       answers: [],
+      result: null,
     }
   },
   // watch: {
@@ -73,18 +72,6 @@ export default ({
     question(){
       return this.test.questions[this.activeQuestion]
     },
-    highScore(){
-
-    },
-    questionAnswers(){
-      let answers = []
-      this.question.options.forEach(o => {
-        if(o.is_correct){
-          answers.push(o.id)
-        }
-      })
-      return answers
-    },
     options(){
       return this.test.questions[this.activeQuestion].options.map(item => {
         return {
@@ -100,24 +87,16 @@ export default ({
 
   methods: {
     nextQuestion(){
-      if(_.isEqual(this.activeQuestionAnswers, this.questionAnswers)){
-        this.score += this.question.points ? this.question.points : 1;
-        this.rightAnswers++;
-      }
       this.answers.push({
-        question_id: this.question.id,
+        id: this.question.id,
         answers: this.activeQuestionAnswers
       })
       if(this.activeQuestion >= this.test.questions.length - 1){
         this.finish = true
         let url = `/faculties/${this.$route.params.faculty_id}/courses/${this.$route.params.course_id}/lessons/${this.$route.params.lesson_id}/test/${this.$route.params.test_id}/answer`
-        this.$axios.post(url, this.answers)
+        this.$axios.post(url, {answers: this.answers})
             .then(response => {
-              // console.log(response)
               this.result = response.data.data;
-              // const token = response.data.token;
-              // setAuthToken(token);
-              // router.push({ name: 'Home' })
             })
             .catch(error => {
               notification.error({
