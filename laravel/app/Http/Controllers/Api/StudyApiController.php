@@ -342,7 +342,7 @@ class StudyApiController extends Controller
 
         $testResult = TestResult::where('test_id', $test->id)->where('student_id', $user->id)->first();
 
-        $correctAnswers = TestAnswer::where('test_result_id', $testResult->id)
+        // $correctAnswers = TestAnswer::where('test_result_id', $testResult->id)
 
 
         return ['score' => $testResult->score, 'max_score'=> $maxScore];
