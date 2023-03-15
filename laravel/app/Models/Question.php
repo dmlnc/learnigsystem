@@ -67,7 +67,7 @@ class Question extends Model implements HasMedia
             ->height($thumbnailHeight)
             ->fit('fill', $thumbnailWidth, $thumbnailHeight)
             ->background('ffffff');
-        $this->addMediaConversion('preview_thumbnail')
+        $this->addMediaConversion('preview')
             ->width($thumbnailPreviewWidth)
             ->height($thumbnailPreviewHeight)
             ->fit('fill', $thumbnailWidth, $thumbnailHeight)

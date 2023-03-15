@@ -303,8 +303,6 @@ class StudyApiController extends Controller
         foreach ($request_questions as $q){
             $db_q = $questions->where('id', $q['id'])->first();
 
-            // Log::info($db_q);
-
             $answers_id = [];
             $total_correct = 1;
             foreach ($q['answers'] as $id){
