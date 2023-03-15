@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\LessonResource;
 use App\Http\Resources\LessonStudyResource;
+use App\Http\Resources\TestStudyResource;
 
 use App\Http\Resources\TestResource;
 use App\Models\Academy;
@@ -212,7 +213,7 @@ class StudyApiController extends Controller
 
             return response()->json(
                 [
-                    'data' => new TestResource($test),
+                    'data' => new TestStudyResource($test),
                     'meta' => [
                         'tests' => $testsMeta,
                         'testFinished' => true,
@@ -224,7 +225,7 @@ class StudyApiController extends Controller
 
             return response()->json(
                 [
-                    'data' => new TestResource($test->load('questions', 'questions.options')),
+                    'data' => new TestStudyResource($test->load('questions', 'questions.options')),
                     'meta' => [
                         'tests' => $testsMeta,
                         'testFinished' => false,
@@ -274,17 +275,6 @@ class StudyApiController extends Controller
             'student_id' => $user->id,
         ]);
 
-        // answers => [
-        //     [
-        //         'id' => question id,
-        //         'answers' => 
-        //         [
-        //             1,2,3,4
-        //             
-        //         ],
-        //     ],
-
-        // ]
 
         foreach ($request_questions as $q){
             $db_q = $questions->where('id', $q['id'])->first();
@@ -300,7 +290,7 @@ class StudyApiController extends Controller
                         $db_o = $db_q->options->where('id', $id)->first();
                         $correct = $db_o->is_correct;
                         // Log::info($total_correct);
-                        $total_correct = $total_correct && $correct;
+                        // $total_correct = $total_correct && $correct;
                         // Log::info($total_correct);
                     }
 
@@ -316,21 +306,19 @@ class StudyApiController extends Controller
             }
             // Log::info($total_correct);
 
-            if($total_correct == 1){
-                $totalScore += $db_q->points;
-            }
-            $maxScore+= $db_q->points;
+            // if($total_correct == 1){
+            //     $totalScore += $db_q->points;
+            // }
+            // $maxScore+= $db_q->points;
         }
+
 
         $testResult->update(['score'=>$totalScore]);
 
 
+
         return response()->json([
-            'data'=> [
-                'score' => $totalScore, 
-                'max_score'=> $maxScore, 
-                'test_result_id' => $testResult->id
-            ]
+            'data'=> $this->getTestResult($user, $test)
         ]);
         // return new TestResource($test->load('questions', 'questions.options'));
     }
@@ -338,30 +326,34 @@ class StudyApiController extends Controller
     protected function getTestResult($user, $test)
     {
 
-        $maxScore = Question::where('test_id', $test->id)->sum('points');
+        $questions = Question::where('test_id', $test->id);
+
+        $maxScore = $questions->sum('points');
 
         $testResult = TestResult::where('test_id', $test->id)->where('student_id', $user->id)->first();
 
-        // $correctAnswers = TestAnswer::where('test_result_id', $testResult->id)
+        $correctAnswers = TestAnswer::where('test_result_id', $testResult->id)->where('is_correct', 1)->count();
+        $totalCorrectAnswers = QuestionOption::whereIn('question_id', $questions->pluck('id'))->where('is_correct', 1)->count();
 
 
-        return ['score' => $testResult->score, 'max_score'=> $maxScore];
+
+        return ['score' => $testResult->score, 'maxScore'=> $maxScore, 'userCorrectAnswers' => $correctAnswers, 'totalCorrectAnswers' => $totalCorrectAnswers];
         // return new TestResource($test->load('questions', 'questions.options'));
     }
 
 
-    public function checkResult(Request $request, Course $course, Lesson $lesson, Test $test)
-    {
-        // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $user = auth()->user();
-        $hasAccess = $user->courses()->where('id', $course->id)->exists();
-        abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
-        abort_if($lesson->course_id != $course->id, Response::HTTP_FORBIDDEN, '403 Forbidden');
-        abort_if($test->lesson_id != $lesson->id, Response::HTTP_FORBIDDEN, '403 Forbidden');
+    // public function checkResult(Request $request, Course $course, Lesson $lesson, Test $test)
+    // {
+    //     // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
+    //     $user = auth()->user();
+    //     $hasAccess = $user->courses()->where('id', $course->id)->exists();
+    //     abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
+    //     abort_if($lesson->course_id != $course->id, Response::HTTP_FORBIDDEN, '403 Forbidden');
+    //     abort_if($test->lesson_id != $lesson->id, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return ['result_exist' => $test->test_results()->where('student_id', $user->id)->exists()];
-        // return new TestResource($test->load('questions', 'questions.options'));
-    }
+    //     return ['result_exist' => $test->test_results()->where('student_id', $user->id)->exists()];
+    //     // return new TestResource($test->load('questions', 'questions.options'));
+    // }
 
     
 
