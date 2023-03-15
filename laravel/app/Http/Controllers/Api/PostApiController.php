@@ -23,7 +23,7 @@ class PostApiController extends Controller
     {
         $user = auth()->user();
 
-        return PostResourсe::collection(Post::where('company_id', $user->company_id)->get());
+        return PostResourсe::collection(Post::where('company_id', $user->company_id)->orderByDesc('created_at')->get());
     }
 
     public function indexStudy()
@@ -47,7 +47,8 @@ class PostApiController extends Controller
                 //     $query->whereIn('id', $user->faculties()->with('academy')->get()->pluck('academy.id'));
                 // });
             })
-        ->get();
+        ->orderByDesc('created_at')
+        ->paginate(10);
 
 
 

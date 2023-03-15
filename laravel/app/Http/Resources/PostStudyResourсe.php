@@ -18,7 +18,7 @@ class PostStudyResourсe extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'text' => $this->text,
-            'media' => ThumbnailResource::collection($this->getMedia('post_thumbnail')),
+            'media' => new ImageResource($this->getFirstMedia('post_thumbnail')),
         ];
     }
 }

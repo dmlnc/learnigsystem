@@ -195,6 +195,45 @@ class StudyApiController extends Controller
 
     public function test(Request $request, Faculty $faculty, Course $course, Lesson $lesson, Test $test)
     {
+
+        $user = auth()->user();
+
+        $previousTest = Test::where('course_id', $course->id)->where('lesson_id', $lesson->id)->where('id', '<', $test->id)->select('id', 'title')->orderBy('id', 'desc')->first();
+        $nextTest= Test::where('course_id', $course->id)->where('lesson_id', $lesson->id)->where('id', '>', $test->id)->select('id', 'title')->orderBy('id', 'asc')->first();
+
+
+        $testsMeta = [
+            'nextTest' => $nextTest,
+            'previousTest' => $previousTest,
+        ];
+
+        if($test->test_results()->where('student_id', $user->id)->exists()){
+            // getTestresult
+
+            return response()->json(
+                [
+                    'data' => new TestResource($test),
+                    'meta' => [
+                        'tests' => $testsMeta,
+                        'testFinished' => true,
+                        'testResult' => $this->getTestResult($user, $test)
+                    ]
+                ]);
+        }
+        else{
+
+            return response()->json(
+                [
+                    'data' => new TestResource($test->load('questions', 'questions.options')),
+                    'meta' => [
+                        'tests' => $testsMeta,
+                        'testFinished' => false,
+                        'testResult' => null
+                    ]
+                ]);
+
+        }
+
         // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
         // $user = auth()->user();
         // $hasAccess = $user->courses()->where('id', $course->id)->exists();
@@ -204,7 +243,6 @@ class StudyApiController extends Controller
         // abort_if($test->test_results()->where('student_id', $user->id)->exists(), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
 
-        return new TestResource($test->load('questions', 'questions.options'));
     }
 
     public function answer(Request $request, Faculty $faculty, Course $course, Lesson $lesson, Test $test)
@@ -297,28 +335,17 @@ class StudyApiController extends Controller
         // return new TestResource($test->load('questions', 'questions.options'));
     }
 
-    public function result(Request $request, Course $course, Lesson $lesson, Test $test)
+    protected function getTestResult($user, $test)
     {
-        // abort_if(($course->is_published == 0) || ($lesson->is_published == 0) || ($test->is_published == 0)), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $user = auth()->user();
-        $hasAccess = $user->courses()->where('id', $course->id)->exists();
-        abort_if(!$hasAccess, Response::HTTP_FORBIDDEN, '403 Forbidden');
-        abort_if($lesson->course_id != $course->id, Response::HTTP_FORBIDDEN, '403 Forbidden');
-        abort_if($test->lesson_id != $lesson->id, Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-
-
 
         $maxScore = Question::where('test_id', $test->id)->sum('points');
 
         $testResult = TestResult::where('test_id', $test->id)->where('student_id', $user->id)->first();
 
-
-        // Create test result
-     
+        $correctAnswers = TestAnswer::where('test_result_id', $testResult->id)
 
 
-        return ['data'=>$test, 'score' => $testResult->score, 'max_score'=> $maxScore, 'test_result_id' => $testResult->id];
+        return ['score' => $testResult->score, 'max_score'=> $maxScore];
         // return new TestResource($test->load('questions', 'questions.options'));
     }
 
