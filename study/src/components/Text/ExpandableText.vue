@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="expandable-text" v-html="content"></div>
+        <div class="quill-content" v-html="content"></div>
        <!--  <div v-if="isCollapsed" v-html="collapsedText"></div>
         <div v-else v-html="content"></div>
         <button @click="toggleCollapse">{{ isCollapsed ? 'Read more' : 'Read less' }}</button> -->

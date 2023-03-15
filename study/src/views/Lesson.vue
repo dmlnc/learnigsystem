@@ -27,7 +27,10 @@
                     </a-row>
                 </template>
                 <a-row :gutter="24" type="flex" justify="center">
-                    <a-col :span="24" :lg="12" :xl="12" class="lesson-content" v-html="lesson.long_text">
+                    <a-col :span="24" :lg="12" :xl="12" class="lesson-content" >
+                        <div class="quill-content" v-html="lesson.long_text">
+                            
+                        </div>
                     </a-col>
                 </a-row>
             </a-card>
