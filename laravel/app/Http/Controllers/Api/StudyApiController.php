@@ -217,7 +217,19 @@ class StudyApiController extends Controller
                     'meta' => [
                         'tests' => $testsMeta,
                         'testFinished' => true,
-                        'testResult' => $this->getTestResult($user, $test)
+                        'testResult' => $this->getTestResult($user, $test),
+                        'course'=>[
+                            'id' => $course->id,
+                            'name'=>$course->title,
+                        ],
+                        'faculty'=>[
+                            'id' => $faculty->id,
+                            'name'=>$faculty->name,
+                        ],
+                        'lesson'=>[
+                            'id' => $lesson->id,
+                            'name'=>$lesson->title,
+                        ],
                     ]
                 ]);
         }
@@ -229,7 +241,19 @@ class StudyApiController extends Controller
                     'meta' => [
                         'tests' => $testsMeta,
                         'testFinished' => false,
-                        'testResult' => null
+                        'testResult' => null,
+                        'course'=>[
+                            'id' => $course->id,
+                            'name'=>$course->title,
+                        ],
+                        'faculty'=>[
+                            'id' => $faculty->id,
+                            'name'=>$faculty->name,
+                        ],
+                        'lesson'=>[
+                            'id' => $lesson->id,
+                            'name'=>$lesson->title,
+                        ],
                     ]
                 ]);
 
