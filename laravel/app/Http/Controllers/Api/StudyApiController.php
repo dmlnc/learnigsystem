@@ -314,7 +314,7 @@ class StudyApiController extends Controller
                         $db_o = $db_q->options->where('id', $id)->first();
                         $correct = $db_o->is_correct;
                         // Log::info($total_correct);
-                        // $total_correct = $total_correct && $correct;
+                        $total_correct = $total_correct && $correct;
                         // Log::info($total_correct);
                     }
 
@@ -330,9 +330,9 @@ class StudyApiController extends Controller
             }
             // Log::info($total_correct);
 
-            // if($total_correct == 1){
-            //     $totalScore += $db_q->points;
-            // }
+            if($total_correct == 1){
+                $totalScore += $db_q->points;
+            }
             // $maxScore+= $db_q->points;
         }
 
