@@ -18,6 +18,8 @@ class PostStudyResourсe extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'text' => $this->text,
+
+            'date' => $this->created_at->format('d.m.y'),
             'media' => new ImageResource($this->getFirstMedia('post_thumbnail')),
         ];
     }

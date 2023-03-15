@@ -12,8 +12,21 @@
                     </template>
                     <a-card-meta>
                         <template #title>
-                            <a-image v-if="post.media != null" :src="post.media.url" class="mr-10" :width="64"></a-image>
-                            {{post.title}}
+                            <div class="d-flex align-items-center">
+                                <div class="mr-20" v-if="post.media != null">
+                                    <a-image :src="post.media.url" :width="64"></a-image>
+                                </div>
+                                <div>
+                                    <a-typography-title :level="5" class="mb-0">
+                                        {{post.title}}
+                                    </a-typography-title>
+                                    <small>
+                                        <a-typography-text type="secondary">
+                                            {{post.date}}
+                                        </a-typography-text>
+                                    </small>
+                                </div>
+                            </div>
                         </template>
                         <template #description>
                             <expandable-text :content="post.text" :rows="3"></expandable-text>
@@ -23,9 +36,20 @@
                         </template>
                     </a-card-meta>
                 </a-card>
-                <!-- <a-button v-if="posts.length >= perPage" @click="loadMore">Load more</a-button> -->
+                <a href="#" @click.prevent="loadMore" v-if="page < postsMeta.last_page">
+                    <a-card size="small" @click="loadMore" class="mb-20">
+                        <a-card-meta>
+                            <template #title>
+                                <div class="text-center">
+                                    Загрузить еще...
+                                </div>
+                            </template>
+                        </a-card-meta>
+                    </a-card>
+                </a>
             </a-col>
             <a-col :span="24" :lg="12" :xl="14" class="mb-24">
+                 <a-affix :offset-top="10">
                 <a-row :gutter="24">
                     <a-col :span="24" :lg="12" :xl="12" class="mb-24">
                         <a-card>
@@ -40,6 +64,7 @@
                         </a-card>
                     </a-col>
                 </a-row>
+            </a-affix>
             </a-col>
         </a-row>
     </div>
@@ -51,6 +76,7 @@ export default ({
     data() {
         return {
             posts: [],
+            postsMeta: [],
             page: 1
         }
     },
@@ -59,19 +85,25 @@ export default ({
     },
 
     mounted() {
-        this.getPosts();
+        this.getPosts(this.page);
     },
 
     methods: {
 
-        getPosts() {
+        loadMore() {
+            this.page += 1;
+            this.getPosts(this.page);
+        },
+
+        getPosts(page) {
             this.$axios.get(`/posts`, {
                     params: {
                         page: this.page
                     }
                 })
                 .then(response => {
-                    this.posts = response.data.data;
+                    this.posts = [...this.posts, ...response.data.data];
+                    this.postsMeta = response.data.meta;
                     // this.parentName = response.data.meta.name;
                     // router.push({ name: 'Academy', params: {academy_id: } })
                 })

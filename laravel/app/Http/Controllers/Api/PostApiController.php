@@ -48,7 +48,7 @@ class PostApiController extends Controller
                 // });
             })
         ->orderByDesc('created_at')
-        ->paginate(10);
+        ->paginate(5);
 
 
 

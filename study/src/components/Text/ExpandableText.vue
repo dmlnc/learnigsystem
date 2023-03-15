@@ -1,9 +1,9 @@
 <template>
     <div>
-        <div class="quill-content" v-html="content"></div>
-       <!--  <div v-if="isCollapsed" v-html="collapsedText"></div>
-        <div v-else v-html="content"></div>
-        <button @click="toggleCollapse">{{ isCollapsed ? 'Read more' : 'Read less' }}</button> -->
+        <div ref="contentWrapper" class=" quill-content mb-10" v-html="content" :class="{'expandable-text' : isCollapsed}"></div>
+        <a-button block @click="toggleCollapse">{{ isCollapsed ? 'Читать полностью' : 'Скрыть' }}</a-button>
+
+        
     </div>
 </template>
 <script>
@@ -20,12 +20,27 @@ export default {
     },
     data() {
         return {
-            isCollapsed: true,
+            isCollapsed: false,
+            showButton: false,
         };
     },
-    mounted() {},
+    mounted() {
+        this.checkHeight();
+    },
 
     methods: {
+
+        checkHeight() {
+            const contentWrapper = this.$refs.contentWrapper;
+            console.log(contentWrapper.offsetHeight);
+            // const content = this.$refs.content;
+            if (contentWrapper.offsetHeight > 150) {
+                this.isCollapsed = true;
+            } else {
+                this.isCollapsed = false;
+            }
+        },
+
         toggleCollapse() {
             this.isCollapsed = !this.isCollapsed;
         }
@@ -33,9 +48,10 @@ export default {
 };
 
 </script>
-
 <style scoped>
-  .expandable-text p:last-child{
-      margin-bottom: 0!important;
-  }
+.expandable-text {
+    height: 150px;
+    overflow: hidden;
+}
+
 </style>

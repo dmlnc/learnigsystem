@@ -108,6 +108,9 @@ $neutral-colors: (
 // / Font
 
 
+.align-items-center{
+	align-items: center;
+}
 
 // Margin & Padding
 @for $i from 0 through 10 {

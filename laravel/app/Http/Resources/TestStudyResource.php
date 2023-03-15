@@ -13,6 +13,7 @@ class TestStudyResource extends JsonResource
             'id' => $this->id,
             'thumbnail' => new ImageResource($this->getFirstMedia('test_thumbnail')),
             'title' => $this->title,
+
             'description' => $this->description,
             'questions' => $this->whenLoaded('questions', function () {
                return QuestionStudyResource::collection($this->questions);
