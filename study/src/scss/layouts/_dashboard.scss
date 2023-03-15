@@ -8,6 +8,19 @@
 	align-items: center!important;
 }
 
+.quill-content{
+	
+	& img,
+	& iframe{
+		display: block;
+		height: auto;
+		width: 100%;
+	}
+
+	& p{
+		margin-bottom: 2px;
+	}
+}
 // Dashboard Layout
 .layout-dashboard {
 	background: transparent;
